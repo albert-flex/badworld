@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.natsufumij.blacksky.mapper.UserMapper">
+    <resultMap id="userMap" type="com.natsufumij.blacksky.domain.User">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="createTime" column="createTime"/>
+        <result property="lastLogin" column="lastLogin"/>
+        <result property="state" column="state"/>
+        <result property="profile.userId" column="profile_user_id"/>
+        <result property="profile.email" column="email"/>
+        <result property="profile.phone" column="phone"/>
+        <result property="profile.address" column="address"/>
+        <result property="profile.work" column="work"/>
+        <result property="profile.company" column="company"/>
+        <result property="profile.website" column="website"/>
+        <collection property="authorities"
+                    ofType="com.natsufumij.blacksky.domain.Authority">
+            <id property="id" column="auth_id"/>
+            <result property="name" column="auth_name"/>
+            <result property="detail" column="auth_detail"/>
+        </collection>
+    </resultMap>
+
+    <!-- 查询用户信息，带上用户资料 -->
+    <select id="fetchUserWithProfile" resultMap="userMap">
+        select
+        u.id as id,
+        u.user_name as userName,
+        u.create_time as createTime,
+        u.last_login as lastLogin,
+        u.state as state,
+        p.user_id as profile_user_id,
+        p.email as email,
+        p.phone as phone,
+        p.address as address,
+        p.work as work,
+        p.company as company,
+        p.website as website,
+        a.id as auth_id,
+        a.name as auth_name,
+        a.detail as auth_detail
+        from user u
+        left join profile p on p.user_id=u.id
+        left join user_authority ua on ua.user_id=p.user_id
+        left join authority a on a.id=ua.authority_id
+        where u.id=#{id}
+    </select>
+
+    <!-- 获取用户信息，不连带查询用户资料 -->
+    <select id="fetchUser" resultMap="userMap">
+        select
+        u.id as id,
+        u.user_name as userName,
+        u.state as state,
+        u.create_time as createTime,
+        u.password as password,
+        u.last_login as lastLogin,
+        from user u
+        where u.id=#{id}
+    </select>
+
+    <!-- 获取用户资料 -->
+    <select id="fetchProfile" resultType="com.natsufumij.blacksky.domain.Profile">
+        select
+        p.user_id as userId,
+        p.email as email,
+        p.phone as phone,
+        p.address as address,
+        p.work as work,
+        p.company as company,
+        p.website as website
+        from profile p
+        where p.user_id=#{userId}
+    </select>
+
+    <!-- 判断是否存在用户名，如果存在返回TRUE，如果不存在返回null -->
+    <select id="containsUser" resultType="java.lang.Boolean">
+        select TRUE
+        from user u
+        where u.user_name=#{id} limit 1
+    </select>
+
+    <select id="checkPassword" resultType="java.lang.Boolean">
+        select TRUE
+        from user u
+        where u.id=#{id} and u.password=#{password}
+    </select>
+
+    <!-- 根据用户名称获取用户 -->
+    <select id="fetchUserByName" resultMap="userMap">
+        select
+        u.id as id,
+        u.state as state,
+        u.user_name as userName,
+        u.create_time as createTime,
+        u.last_login as lastLogin,
+        u.password as password,
+        a.id as auth_id,
+        a.name as auth_name,
+        a.detail as auth_detail
+        from user u
+        left join user_authority ua on ua.user_id=u.id
+        left join authority a on a.id=ua.authority_id
+        where u.user_name=#{userName}
+    </select>
+
+    <!-- 添加用户信息 -->
+    <insert id="postUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user (user_name,password)
+        values (#{userName},#{password})
+    </insert>
+
+    <!-- 添加用户资料 -->
+    <insert id="postProfile">
+        insert into profile(user_id,email)
+        values (#{userId},#{email})
+    </insert>
+
+    <!-- 更新用户信息 -->
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="password !=null and password !=''">
+                password = #{password},
+            </if>
+            <if test="lastLogin !=null">
+                last_login = #{lastLogin},
+            </if>
+            <if test="state !=null">
+                state = #{state},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 更新用户资料 -->
+    <update id="updateProfile">
+        update profile
+        <set>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="address != null and address !=''">
+                address = #{address},
+            </if>
+            <if test="website != null and website !=''">
+                website = #{website},
+            </if>
+            <if test="work != null and work != ''">
+                work = #{work},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+
+    <!-- 删除用户信息 -->
+    <delete id="deleteUser">
+        delete from user u
+        where u.id=#{id}
+    </delete>
+
+    <!-- 删除用户资料 -->
+    <delete id="deleteProfile">
+        delete from profile p
+        where p.user_id=#{userId}
+    </delete>
+    
+    <insert id="insertAuthority" keyProperty="id" useGeneratedKeys="true">
+        insert into user_authority(user_id,authority_id) values
+        (#{userId},#{authorityId})
+    </insert>
+
+    <delete id="deleteUserOnAuthority">
+        delete from user_authority u
+        where u.user_id=#{user_id} and u.authority_id=#{authorityId}
+    </delete>
+    
+    <delete id="deleteUserAuthority">
+        delete from user_authority u
+        where u.user_id=#{userId}
+    </delete>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.natsufumij.blacksky.mapper.ArtifactMapper">
+    
+    <select id="fetchByType" resultType="com.natsufumij.blacksky.domain.Artifact">
+        select 
+            id,user_id,type_id,name,version,
+            create_time,update_time,title,content
+        from artifact
+        where type_id=#{typeId}
+    </select>
+    
+    <select id="fetchByUser" resultType="com.natsufumij.blacksky.domain.Artifact">
+        select 
+            id,user_id,type_id,name,version,
+            create_time,update_time,title,content
+        from artifact
+        where user_id=#{userId}
+    </select>
+    
+    <select id="fetch" resultType="com.natsufumij.blacksky.domain.Artifact">
+        select 
+            id,user_id,type_id,name,version,
+            create_time,update_time,title,content
+        from artifact
+        where id=#{artifactId}
+    </select>
+    
+    <select id="fetchType" resultType="com.natsufumij.blacksky.domain.ArtifactType">
+        select id,name,create_time,user_id
+        from artifact_type
+        where id=#{typeId}
+    </select>
+    
+    <select id="fetchTypes" resultType="com.natsufumij.blacksky.domain.ArtifactType">
+        select id,name,create_time,user_id
+        from artifact_type
+        where name like concat('%',#{name},'%')
+    </select>
+    
+    <select id="fetchArtifacts" resultType="com.natsufumij.blacksky.domain.Artifact">
+        select
+            id,user_id,type_id,name,version,
+            create_time,update_time,title,content
+        from artifact
+        where name like concat('%',#{name},'%')
+    </select>
+    
+    <insert id="newType" keyProperty="id" useGeneratedKeys="true">
+        insert into artifact_type (name,user_id)
+        values (#{name},#{userId})
+    </insert>
+    
+    <insert id="newArtifact" keyProperty="id" useGeneratedKeys="true">
+        insert into artifact (user_id,type_id,name,version,title,content) values
+        (
+            #{userId},
+            #{typeId},
+            #{name},
+            #{version},
+            #{title},
+            #{content}
+        )
+    </insert>
+    
+    <update id="update">
+        update artifact 
+        <set>
+            <if test="version!=null and version!=''">
+                version=#{version},
+            </if>
+            <if test="title!=null and title!=''">
+                title=#{title},
+            </if>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="content!=null and content!=''">
+                content=#{content},
+            </if>
+            update_time = now()
+        </set>
+        where id=#{id}
+    </update>
+    
+    <delete id="delete">
+        delete from artifact a
+        where a.id=#{artifactId}
+    </delete>
+
+    <delete id="deleteType">
+        delete from artifact_type a
+        where a.id=#{typeId}
+    </delete>
+</mapper>        
