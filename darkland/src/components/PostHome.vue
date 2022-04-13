@@ -1,0 +1,385 @@
+<template>
+  <div class="post">
+    <div class="aside">
+      <a-mask-back :showMask="showPost" />
+      <form
+        class="post-card"
+        :style="showPost ? 'display:block' : 'display:none'"
+      >
+        <p>
+          <input type="text" placeholder="输入标题..." />
+          <button type="submit">发送</button>
+          <button @click.stop.prevent="closePost">关闭</button>
+        </p>
+        <p>
+          <textarea
+            name="content"
+            id="content"
+            placeholder="请输入帖子内容..."
+          ></textarea>
+        </p>
+      </form>
+
+      <a-user-profile />
+      <ul class="post-button">
+        <li><button @click="openPost">分享生活</button></li>
+        <li><button>看自己</button></li>
+      </ul>
+      <form class="query-form">
+        <h1>查询帖子</h1>
+        <p>
+          <label for="uid">用户Id</label>
+          <input type="text" name="uid" id="uid" />
+        </p>
+        <p>
+          <label for="ureplyid">被回复的用户Id</label>
+          <input type="text" name="ureplyid" id="ureplyid" />
+        </p>
+        <p>
+          <label for="uname">用户名</label>
+          <input type="text" name="uname" id="uname" />
+        </p>
+        <p>
+          <label for="title">帖子标题</label>
+          <input type="text" name="title" id="title" />
+        </p>
+        <p>
+          <label for="timefrom">时间起点</label>
+          <input type="date" name="timefrom" id="timefrom" />
+        </p>
+        <p>
+          <label for="timeend">时间终点</label>
+          <input type="date" name="timeend" id="timeend" />
+        </p>
+        <div class="tool">
+          <button type="submit">查询</button>
+          <button>清空</button>
+          <button>最新</button>
+        </div>
+      </form>
+    </div>
+    <div class="content">
+      <article class="get-to" v-for="item in itemlength" :key="item.id">
+        <div class="left0">
+          <div class="bar">
+            <h1 class="push">这是标题标题标题</h1>
+            <button>回复(200)</button>
+            <p>20分钟前</p>
+          </div>
+          <div class="post-content">
+            <p>
+              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
+              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
+              一想到以后还会有手表会丢掉，心里还是会痛的。
+            </p>
+            <span class="lefttriangle"></span>
+          </div>
+        </div>
+        <div class="right0">
+          <div class="bar"></div>
+          <div>
+            <img src="../assets/backpaper.png" />
+            <p>我</p>
+          </div>
+        </div>
+      </article>
+      <article class="get-to">
+        <div class="right0">
+          <div class="bar"></div>
+          <div>
+            <img src="../assets/backpaper.png" />
+            <p>夏文纯一</p>
+          </div>
+        </div>
+        <div class="left0">
+          <div class="bar">
+            <h1 class="push">这是标题标题标题</h1>
+            <button>回复(200)</button>
+            <p>20分钟前</p>
+          </div>
+          <div class="post-content">
+            <span class="righttriangle"></span>
+            <p>
+              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
+              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
+              一想到以后还会有手表会丢掉，心里还是会痛的。
+              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
+              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
+              一想到以后还会有手表会丢掉，心里还是会痛的。
+            </p>
+          </div>
+        </div>
+      </article>
+      <a-page-back />
+    </div>
+  </div>
+</template>
+
+<script>
+import PageBack from "./PageBack.vue";
+import UserProfile from "./UserProfile.vue";
+import MaskBack from "./MaskBack.vue";
+
+export default {
+  name: "PostHome",
+  data() {
+    return {
+      itemlength: [1, 2, 3, 4, 5, 6, 7, 8],
+      showPost: false,
+    };
+  },
+  components: {
+    AMaskBack: MaskBack,
+    APageBack: PageBack,
+    AUserProfile: UserProfile,
+  },
+  methods: {
+    closePost() {
+      this.showPost = false;
+      console.log("closePost");
+    },
+    openPost() {
+      this.showPost = true;
+    },
+  },
+};
+</script>
+
+<style scoped>
+button {
+  color: #2c3e50;
+  border-radius: 10px;
+  padding: 2%;
+}
+
+.post {
+  display: flex;
+}
+
+.aside {
+  width: 30%;
+  padding: 1%;
+}
+
+.content {
+  width: 70%;
+  margin: 1%;
+  margin-left: 0px;
+}
+
+.content button {
+  align-self: center;
+  margin: 10px auto;
+}
+
+.post-button {
+  list-style: none;
+  display: flex;
+  justify-self: stretch;
+  align-items: center;
+}
+
+.post-button li {
+  margin-right: 5%;
+  width: 50%;
+  justify-self: center;
+}
+
+.post-button button {
+  align-self: center;
+  padding: 10px;
+}
+
+.query-form {
+  position: sticky;
+  top: 90px;
+  margin-top: 10px;
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.query-form h1 {
+  text-align: center;
+}
+
+.query-form p {
+  display: flex;
+}
+
+.query-form label {
+  width: 30%;
+  margin: 5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  z-index: 1;
+}
+
+.query-form input {
+  width: 50%;
+  border-radius: 5px;
+  padding: 2%;
+  margin: 5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.post-card {
+  font-size: 1.1em;
+  position: fixed;
+  padding: 20px;
+  margin: 20px;
+  width: 400px;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: 100px;
+  background-color: #2c3e50;
+  border-radius: 20px;
+  color: white;
+  z-index: 20;
+}
+
+.post-card p {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  width: 100%;
+}
+
+.post-card input {
+  width: 50%;
+  height: 30px;
+  margin: 2%;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.post-card button {
+  width: 15%;
+  padding: 10px;
+  margin: 1%;
+  border-radius: 5px;
+}
+
+.post-card textarea {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin: 2%;
+  padding: 10px;
+  height: 100px;
+  width: 90%;
+  border-radius: 5px;
+}
+
+.tool {
+  display: flex;
+  list-style: none;
+}
+
+.tool button {
+  width: 30%;
+  margin: 10px;
+  padding: 10px;
+  align-self: center;
+}
+
+/*
+  POST CONTENT
+*/
+
+.get-to {
+  display: flex;
+  margin: 0%;
+  padding: 0px;
+  margin-bottom: 10px;
+  background-color: #2c3e50;
+  color: white;
+  border-radius: 10px 10px;
+}
+
+.bar {
+  display: flex;
+  height: 10%;
+  margin: 2%;
+}
+
+.bar button,
+.bar p {
+  margin: 5px;
+  background: none;
+  font-size: 0.9em;
+  border: none;
+  color: white;
+  align-self: center;
+  text-align: center;
+}
+
+.post-content {
+  display: flex;
+}
+
+.post-content p {
+  text-indent: 2em;
+  margin: 0px;
+  background-color: cadetblue;
+  border-radius: 10px;
+  padding: 2% 3%;
+  display: flex;
+}
+
+.push {
+  margin-right: auto;
+  font-size: 1.1em;
+  align-self: center;
+  text-align: center;
+}
+
+.right0,
+.left0 {
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 1%;
+  padding-bottom: 0px;
+}
+
+.right0 p {
+  margin: 2px;
+  font-size: 1em;
+  text-align: center;
+}
+
+.right0 img,
+.left0 img {
+  width: 100px;
+  height: 100px;
+}
+
+.righttriangle {
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid cadetblue;
+  top: 10px;
+  position: relative;
+}
+
+.lefttriangle {
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid cadetblue;
+  top: 10px;
+  position: relative;
+}
+
+.mask {
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 240%;
+  background-color: #111e;
+  z-index: 5;
+}
+</style>
