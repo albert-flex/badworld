@@ -36,29 +36,24 @@
       </form>
     </div>
     <div class="main">
-      <div class="artifact-cards">
-        <div class="card" v-for="item in items" :key="item.id">
-          <img src="../assets/backpaper.png" alt="">
-          <h1>标题标题</h1>
-        </div>
-      </div>
+      <!-- <a-artifact-pack />  -->
+      <a-artifact-write />
     </div>
   </div>
 </template>
 
 <script>
 import UserProfile from "./UserProfile.vue";
+// import ArtifactPack from "./artifact/ArtifactPack.vue";
+import ArtifactWriter from "./artifact/ArtifactWriter.vue";
 
 export default {
   name: "ArtifactHome",
   components: {
     AUserProfile: UserProfile,
+    // AArtifactPack: ArtifactPack,
+    AArtifactWrite: ArtifactWriter,
   },
-  data(){
-    return{
-      items:[1,2,3,4,5,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    }
-  }
 };
 </script>
 
@@ -141,9 +136,9 @@ button {
 
 .card {
   flex: 1;
-  height: 31%;
-  min-width: 31%;
-  max-width: 31%;
+  height: 29%;
+  min-width: 29%;
+  max-width: 29%;
   background-color: #999;
   margin: 5px;
   padding: 5px;
@@ -152,7 +147,6 @@ button {
 
 .card:hover{
   box-shadow: 10px 10px 50px #fff;
-  box-shadow: -10px -10px 50px #fff;
 }
 
 .card img{
@@ -168,8 +162,5 @@ button {
   text-align: center;
 }
 
-.card:nth-child(3n){
-  margin-right: 0px;
-}
 
 </style>
