@@ -72,13 +72,11 @@ button {
 .aside {
   width: 20%;
   margin: 2%;
-  background-color: blue;
 }
 
 .main {
   width: 70%;
   margin: 2%;
-  background-color: green;
 }
 
 .query-form {
