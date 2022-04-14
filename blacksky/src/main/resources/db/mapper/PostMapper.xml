@@ -2,20 +2,20 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.natsufumij.blacksky.mapper.PostMapper">
-    <select id="fetchPost" resultType="com.natsufumij.blacksky.domain.Post">
+<mapper namespace="com.albertflex.blacksky.mapper.PostMapper">
+    <select id="fetchPost" resultType="com.albertflex.blacksky.domain.Post">
         select
         id,user_id,create_time,content,reply_count,reply_post_id
         from post where id=#{id}
     </select>
 
-    <select id="fetchPostsByUserId" resultType="com.natsufumij.blacksky.domain.Post">
+    <select id="fetchPostsByUserId" resultType="com.albertflex.blacksky.domain.Post">
         select
         id,user_id,create_time,content,reply_count,reply_post_id
         from post where user_id=#{userId}
     </select>
 
-    <select id="fetchPostsReplyOn" resultType="com.natsufumij.blacksky.domain.Post">
+    <select id="fetchPostsReplyOn" resultType="com.albertflex.blacksky.domain.Post">
         select
         id,user_id,create_time,content,reply_count,reply_post_id
         from post where reply_post_id=#{postId}

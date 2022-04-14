@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.natsufumij.blacksky.mapper.ArtifactMapper">
+<mapper namespace="com.albertflex.blacksky.mapper.ArtifactMapper">
     
-    <select id="fetchByType" resultType="com.natsufumij.blacksky.domain.Artifact">
+    <select id="fetchByType" resultType="com.albertflex.blacksky.domain.Artifact">
         select 
             id,user_id,type_id,name,version,
             create_time,update_time,title,content
@@ -12,7 +12,7 @@
         where type_id=#{typeId}
     </select>
     
-    <select id="fetchByUser" resultType="com.natsufumij.blacksky.domain.Artifact">
+    <select id="fetchByUser" resultType="com.albertflex.blacksky.domain.Artifact">
         select 
             id,user_id,type_id,name,version,
             create_time,update_time,title,content
@@ -20,7 +20,7 @@
         where user_id=#{userId}
     </select>
     
-    <select id="fetch" resultType="com.natsufumij.blacksky.domain.Artifact">
+    <select id="fetch" resultType="com.albertflex.blacksky.domain.Artifact">
         select 
             id,user_id,type_id,name,version,
             create_time,update_time,title,content
@@ -28,19 +28,19 @@
         where id=#{artifactId}
     </select>
     
-    <select id="fetchType" resultType="com.natsufumij.blacksky.domain.ArtifactType">
+    <select id="fetchType" resultType="com.albertflex.blacksky.domain.ArtifactType">
         select id,name,create_time,user_id
         from artifact_type
         where id=#{typeId}
     </select>
     
-    <select id="fetchTypes" resultType="com.natsufumij.blacksky.domain.ArtifactType">
+    <select id="fetchTypes" resultType="com.albertflex.blacksky.domain.ArtifactType">
         select id,name,create_time,user_id
         from artifact_type
         where name like concat('%',#{name},'%')
     </select>
     
-    <select id="fetchArtifacts" resultType="com.natsufumij.blacksky.domain.Artifact">
+    <select id="fetchArtifacts" resultType="com.albertflex.blacksky.domain.Artifact">
         select
             id,user_id,type_id,name,version,
             create_time,update_time,title,content

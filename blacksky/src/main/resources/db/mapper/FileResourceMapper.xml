@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.albertflex.blacksky.mapper.FileResourceMapper">
+    <cache/>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into file_resource(name,format)
+        values
+        (#{name},#{format})
+    </insert>
+
+    <select id="views" resultType="com.albertflex.blacksky.domain.FileResource">
+        select id,name,format,upload_time
+        from file_resource
+    </select>
+
+    <select id="get" resultType="com.albertflex.blacksky.domain.FileResource">
+        select id,name,format,upload_time
+        from file_resource where id=#{id}
+    </select>
+
+    <delete id="remove">
+        delete file_resource where id=#{id}
+    </delete>
+</mapper>

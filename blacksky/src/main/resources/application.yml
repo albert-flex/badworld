@@ -1,3 +1,7 @@
+app:
+  file-resource:
+    prefix: file_resource
+
 server:
   port: 9001
 
@@ -13,6 +17,11 @@ spring:
     username: root
     password: test
 
+  servlet:
+    multipart:
+      max-request-size: 20MB
+      max-file-size: 20MB
+
 mybatis:
   mapper-locations: classpath:db/mapper/*.xml
   configuration:
@@ -21,3 +30,4 @@ mybatis:
 logging:
   level:
     com.natsufumij.blacksky.mapper: trace
+    org.springframework.security: DEBUG

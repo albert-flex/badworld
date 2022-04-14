@@ -90,3 +90,12 @@ create table `artifact`(
     `content` varchar(1024) not null,
     primary key(`id`)
 );
+
+drop table if exists `file_resource`;
+create table `file_resource`(
+    `id` bigint not null auto_increment,
+    `name` varchar(256) not null,
+    `format` varchar(256) not null,
+    `upload_time` datetime not null default now(),
+    primary key(`id`)
+);
