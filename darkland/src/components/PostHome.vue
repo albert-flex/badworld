@@ -73,7 +73,7 @@
             <p>
               {{item.content}}
             </p>
-            <span class="lefttriangle"></span>
+            <span class="righttriangle"></span>
           </div>
         </div>
         <div class="right0">
@@ -99,10 +99,10 @@
             <p>{{item.createTime}}</p>
           </div>
           <div class="post-content">
+            <span class="lefttriangle"></span>
             <p>
               {{item.content}}
             </p>
-            <span class="lefttriangle"></span>
           </div>
         </div>
       </article>
@@ -329,7 +329,7 @@ button {
 .get-to {
   display: flex;
   margin: 0%;
-  padding: 0px;
+  padding: 2%;
   margin-bottom: 10px;
   background-color: #2c3e50;
   color: white;
@@ -359,6 +359,7 @@ button {
 
 .post-content p {
   text-indent: 2em;
+  width:100%;
   margin: 0px;
   background-color: cadetblue;
   border-radius: 10px;
@@ -366,19 +367,27 @@ button {
   display: flex;
 }
 
+
+
 .push {
   margin-right: auto;
-  font-size: 1.1em;
+  font-size: 1.2em;
   align-self: center;
   text-align: center;
 }
 
 .right0,
 .left0 {
-  margin-left: 2%;
-  margin-right: 2%;
   margin-top: 1%;
   padding-bottom: 0px;
+}
+
+.left0{
+  width:80%;
+}
+
+.right{
+  width:20%;
 }
 
 .right0 p {
@@ -393,7 +402,7 @@ button {
   height: 100px;
 }
 
-.righttriangle {
+.lefttriangle{
   width: 0px;
   height: 0px;
   border-top: 8px solid transparent;
@@ -403,7 +412,7 @@ button {
   position: relative;
 }
 
-.lefttriangle {
+.righttriangle {
   width: 0px;
   height: 0px;
   border-top: 8px solid transparent;
@@ -413,14 +422,4 @@ button {
   position: relative;
 }
 
-.mask {
-  display: block;
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 240%;
-  background-color: #111e;
-  z-index: 5;
-}
 </style>

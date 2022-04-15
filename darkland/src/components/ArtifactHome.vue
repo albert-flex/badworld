@@ -2,6 +2,10 @@
   <div class="content">
     <div class="aside">
       <a-user-profile :id="id"/>
+      <div class="tool">
+        <button @click="toWrite">发布新作品</button>
+        <button>看自己</button>
+      </div>
       <form class="query-form">
         <h1>查询作品</h1>
         <p>
@@ -36,15 +40,14 @@
       </form>
     </div>
     <div class="main">
-      <!-- <a-artifact-pack />  -->
-      <a-artifact-write />
+      <component :is="compName" @view="view" :is-view="isView" :view-id="viewId"/>
     </div>
   </div>
 </template>
 
 <script>
 import UserProfile from "./UserProfile.vue";
-// import ArtifactPack from "./artifact/ArtifactPack.vue";
+import ArtifactPack from "./artifact/ArtifactPack.vue";
 import ArtifactWriter from "./artifact/ArtifactWriter.vue";
 
 export default {
@@ -52,11 +55,41 @@ export default {
   props:{
     id:Number,
   },
+  data(){
+    return{
+      nowComp: "AArtifactPack",
+      comps: ["AArtifactPack","AArtifactWrite"],
+      isView: true,
+      viewId: -1,
+    }
+  },
+  computed:{
+    compName(){
+      return this.nowComp;
+    }
+  },
   components: {
     AUserProfile: UserProfile,
-    // AArtifactPack: ArtifactPack,
+    AArtifactPack: ArtifactPack,
     AArtifactWrite: ArtifactWriter,
   },
+  methods:{
+    view(id){
+      this.viewId=id;
+      this.isView=true;
+      this.nowComp=this.comps[1];
+    },
+    toWrite(){
+      this.viewId=-1;
+      this.isView=false;
+      this.nowComp=this.comps[1];
+    },
+    toPack(){
+      this.viewId=-1;
+      this.isView=false;
+      this.nowComp=this.comps[0];
+    }
+  }
 };
 </script>
 

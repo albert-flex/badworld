@@ -3,7 +3,7 @@
     <div class="head">
       <div class="avator">
         <img alt="用户头像" src="./default.png" />
-        <input type="file" name="avataor" id="avator-button" />
+        <input type="file" name="avataor" id="avator-button" v-if="!isView"/>
       </div>
       <div class="data" v-if="!isView">
         <p>
@@ -17,10 +17,10 @@
         <p>
           <label for="type">类型</label>
           <select name="type" id="type" :disabled="isView">
-            <option value="game">游戏</option>
-            <option value="music">音乐</option>
-            <option value="manga">漫画</option>
-            <option value="novel">小说</option>
+            <option value="1">游戏</option>
+            <option value="2">音乐</option>
+            <option value="3">漫画</option>
+            <option value="4">小说</option>
           </select>
           <button @click="addNewType">+</button>
         </p>
@@ -36,19 +36,19 @@
       <div class="data2" v-if="isView">
         <p>
           <label for="name">名称</label>
-          <label>名称</label>
+          <label>{{ artifact.name }}</label>
         </p>
         <p>
           <label for="title">标题</label>
-          <label>标题</label>
+          <label>{{ artifact.title }}</label>
         </p>
         <p>
           <label for="type">类型</label>
-          <label>类型</label>
+          <label>{{ artifact.type }}</label>
         </p>
         <p>
           <label for="version">版本</label>
-          <label>版本</label>
+          <label>{{artifact.version}}</label>
         </p>
       </div>
     </div>
@@ -60,7 +60,7 @@
         :is="currentMk"
         class="content-area"
         height="800px"
-        :text="text"
+        :text="artifact.content"
       />
     </div>
   </div>
@@ -69,13 +69,27 @@
 <script>
 import VMdEditor from "@kangc/v-md-editor";
 import VMdPreview from "@kangc/v-md-editor/lib/preview";
+import axios from "axios";
+axios.defaults.withCredentials=true;
+axios.defaults.baseURL="/api";
 
 export default {
   name: "ArtifactWriter",
+  props:{
+    viewId: Number,
+    isView: Boolean,
+  },
   data() {
     return {
-      text: "",
-      isView: false,
+      editId:-1,
+      artifact:{
+        id: 0,
+        name: "名称",
+        title: "标题",
+        type: 0,
+        version: "0",
+        content:"",
+      }
     };
   },
   computed: {
@@ -89,10 +103,24 @@ export default {
   },
   methods:{
     addNewType(){
-      let name=prompt("please enter type name","default");
-      name;
+      let name=prompt("请输入需要添加的新类型","default");
+      console.log(name);
     }
   },
+  mounted(){
+    if(this.isView){
+        axios.get("artifact/"+this.viewId)
+        .then(res=>{
+          if(res.status==200){
+            this.artifact=res.data;
+          }else{
+            alert(res.statusText);
+          }
+        }).catch(e=>{
+          alert(e);
+        });
+    }
+  }
 };
 </script>
 

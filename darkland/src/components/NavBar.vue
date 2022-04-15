@@ -11,11 +11,11 @@
   <form class="login-box" id="login-box" :style="showLogin?'display:block':'display:none'">
       <p>
         <label for="username">用户名:</label>
-        <input type="text" name="username" id="username" />
+        <input type="text" name="username" id="username" v-model="loginData.username"/>
       </p>
       <p>
         <label for="password">密 码:</label>
-        <input type="password" name="password" id="password" />
+        <input type="password" name="password" id="password" v-model="loginData.password"/>
       </p>
       <p>
         <ul class="tool">
@@ -30,15 +30,15 @@
   <form class="register-box" :style="showRegister?'display:block':'display:none'">
     <p>
       <label for="username2">用户名:</label>
-      <input type="text" name="username2" id="username2">
+      <input type="text" name="username2" id="username2" v-model="registerData.username">
     </p>
     <p>
       <label for="password2">密 码:</label>
-      <input type="text" name="password2" id="password2">
+      <input type="text" name="password2" id="password2" v-model="registerData.password">
     </p>
     <p>
       <label for="email">邮 箱:</label>
-      <input type="email" name="email" id="email">
+      <input type="email" name="email" id="email" v-model="registerData.profile.email">
     </p>
     <p>
       <ul class="tool">
@@ -64,6 +64,17 @@ export default {
       //TODO: Login
       showLogin: false,
       showRegister: false,
+      loginData: {
+        username:"",
+        password:"",
+      },
+      registerData: {
+        username:"",
+        password:"",
+        profile: {
+          email:"",
+        },
+      },
     };
   },
   components: {
@@ -87,15 +98,15 @@ export default {
     },
     login() {
       let params=new FormData();
-      params.append("username","albert");
-      params.append("password","moeyui0624");
+      params.append("username",this.loginData.username);
+      params.append("password",this.loginData.password);
       let config ={
         headers: {"Content-Type":"application/x-www-form-urlencoded"}
       };
       let url="login";
       axios.post(url,params,config)
-      .then(response=>{
-        if(response.status==200){
+      .then(response=> {
+        if(response.status==200) {
           alert("登录成功!");
           this.isLogined=true;
           this.$emit("logined");
@@ -107,11 +118,8 @@ export default {
       })
     },
     register() {
-        let url="artifact/1";
-        let config ={
-        headers: {"Content-Type":"application/json"}
-      };
-        axios.get(url,null,config)
+        let url="/user/register";
+        axios.post(url,this.loginData)
         .then(response=>{
         if(response.status==200){
           alert("查询成功!");

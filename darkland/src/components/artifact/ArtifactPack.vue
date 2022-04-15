@@ -1,20 +1,66 @@
 <template>
   <div class="artifact-cards">
-    <div class="card" v-for="item in items" :key="item.id">
-      <img src="./backpaper.png" alt="" />
-      <h1>标题标题</h1>
+    <div class="card" v-for="item in items" :key="item.id" @click="$emit('view',item.id)">
+      <img src="./default.png" alt="" />
+      <h1>{{ item.title }}</h1>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+axios.defaults.withCredentials=true;
+axios.defaults.baseURL="/api";
+
 export default {
   name: "ArtifactPack",
+  emits:["view"],
   data() {
     return {
-      items: [1, 2, 3, 4, 5, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      items: [
+        {
+          id: 0,
+          title: "标题标题",
+        },
+        {
+          id: 1,
+          title: "标题标题",
+        },
+        {
+          id: 2,
+          title: "标题标题",
+        },
+        {
+          id: 3,
+          title: "标题标题",
+        },
+        {
+          id: 4,
+          title: "标题标题",
+        },
+        {
+          id: 5,
+          title: "标题标题",
+        },
+        {
+          id: 6,
+          title: "标题标题",
+        },
+      ],
     };
   },
+  mounted(){
+    axios.get("artifact/fetch/news")
+    .then(res=>{
+      if(res.status==200){
+        this.items=res.data;
+      }else{
+        alert(res.statusText);
+      }
+    }).catch(e=>{
+      alert(e);
+    });
+  }
 };
 </script>
 
@@ -30,14 +76,14 @@ export default {
   height: 29%;
   min-width: 29%;
   max-width: 29%;
-  background-color: #999;
+  background-color: white;
   margin: 10px;
   padding: 5px;
   border-radius: 10px;
 }
 
 .card:hover {
-  box-shadow: 10px 10px 50px #fff;
+  background-color: #999;
 }
 
 .card img {
