@@ -27,6 +27,14 @@
         from artifact
         where id=#{artifactId}
     </select>
+
+    <select id="fetchNews" resultType="com.albertflex.blacksky.domain.Artifact">
+        select
+        id,user_id,type_id,name,version,
+        create_time,update_time,title,content
+        from artifact
+        order by id desc limit #{size}
+    </select>
     
     <select id="fetchType" resultType="com.albertflex.blacksky.domain.ArtifactType">
         select id,name,create_time,user_id

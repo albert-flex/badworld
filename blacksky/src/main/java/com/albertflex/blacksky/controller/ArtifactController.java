@@ -46,6 +46,11 @@ public class ArtifactController {
     public Artifact fetch(@PathVariable("artifactId") Long artifactId) {
         return artifactServices.fetch(artifactId);
     }
+
+    @GetMapping("/fetch/news")
+    public List<Artifact> fetchNews(){
+        return artifactServices.fetchNews();
+    }
     
     @GetMapping("/type/{typeId}")
     public ArtifactType fetchType(@PathVariable("typeId") Long typeId) {
