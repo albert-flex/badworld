@@ -14,6 +14,8 @@ public interface PostMapper {
     
     //根据用户Id获取已发布的帖子
     List<Post> fetchPostsByUserId(Long userId);
+
+    List<Post> fetchNewsPosts(Integer size);
     
     //根据帖子Id获取所有直接的回复帖子
     List<Post> fetchPostsReplyOn(Long postId);

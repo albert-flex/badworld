@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="aside">
-      <a-user-profile />
+      <a-user-profile :id="id"/>
       <form class="query-form">
         <h1>查询作品</h1>
         <p>
@@ -49,6 +49,9 @@ import ArtifactWriter from "./artifact/ArtifactWriter.vue";
 
 export default {
   name: "ArtifactHome",
+  props:{
+    id:Number,
+  },
   components: {
     AUserProfile: UserProfile,
     // AArtifactPack: ArtifactPack,

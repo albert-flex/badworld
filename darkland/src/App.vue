@@ -1,10 +1,11 @@
 <template>
   <div>
-    <a-nav-bar @to-home="toHome" @to-about-site="toAboutSite" />
-    <component
-      :is="currentHome"
-      @to-post="toPost"
-      @to-artifact="toArtifact" />
+    <a-nav-bar
+      @to-home="toHome"
+      @to-about-site="toAboutSite"
+      @logined="logined"
+    />
+    <component :is="currentHome" @to-post="toPost" @to-artifact="toArtifact" :id="id"/>
     <a-foot-bar />
   </div>
 </template>
@@ -16,6 +17,9 @@ import HomePage from "./components/HomePage.vue";
 import AboutSite from "./components/AboutSite.vue";
 import PostHome from "./components/PostHome.vue";
 import ArtifactHome from "./components/ArtifactHome.vue";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "App",
@@ -23,6 +27,8 @@ export default {
     return {
       currentTab: "AHomePage",
       Tabs: ["AHomePage", "AAboutSite", "APostHome", "AArtifactHome"],
+      islogined: false,
+      id: 0,
     };
   },
   computed: {
@@ -40,7 +46,24 @@ export default {
   },
   methods: {
     toPost() {
-      this.currentTab = this.Tabs[2];
+      if (!this.islogined) {
+        alert("未登录，请先登录");
+      } else {
+        this.currentTab = this.Tabs[2];
+      }
+    },
+    logined() {
+      this.islogined = true;
+      axios
+        .post("/user/self")
+        .then(res=>{
+          if(res.status===200){
+            this.id=res.data;
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
     },
     toHome() {
       this.currentTab = this.Tabs[0];
@@ -50,7 +73,11 @@ export default {
       this.currentTab = this.Tabs[1];
     },
     toArtifact() {
-      this.currentTab = this.Tabs[3];
+      if (!this.islogined) {
+        alert("未登录，请先登录");
+      } else {
+        this.currentTab = this.Tabs[3];
+      }
     },
   },
   mounted() {},

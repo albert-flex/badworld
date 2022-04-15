@@ -11,20 +11,20 @@
     -->
 
     <insert id="post" keyProperty="id" useGeneratedKeys="true">
-        insert into board_word(email,title,content) values
-        (#{email},#{title},#{content})
+        insert into board_word(email,content) values
+        (#{email},#{content})
     </insert>
 
     <select id="get" resultType="com.albertflex.blacksky.domain.BoardWord">
         select id,email,
-        title,left_time,content
+        left_time,content
         from board_word
         where id=#{id}
     </select>
 
     <select id="fetchNewest" resultType="com.albertflex.blacksky.domain.BoardWord">
         select id,email,
-        title,left_time,content
+        left_time,content
         from board_word order by id desc limit 10
     </select>
 

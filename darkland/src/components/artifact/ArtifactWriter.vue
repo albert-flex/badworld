@@ -22,7 +22,7 @@
             <option value="manga">漫画</option>
             <option value="novel">小说</option>
           </select>
-          <button>+</button>
+          <button @click="addNewType">+</button>
         </p>
         <p>
           <label for="version">版本</label>
@@ -86,6 +86,12 @@ export default {
   components: {
     AEditor: VMdEditor,
     AView: VMdPreview,
+  },
+  methods:{
+    addNewType(){
+      let name=prompt("please enter type name","default");
+      name;
+    }
   },
 };
 </script>

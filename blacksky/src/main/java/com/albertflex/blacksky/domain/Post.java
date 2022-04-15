@@ -10,6 +10,7 @@ public class Post {
 
     private Long id;
     private Long userId;
+    private String title;
     private Date createTime;
     private String content;
     private Long replyCount;

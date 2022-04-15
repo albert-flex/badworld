@@ -38,6 +38,11 @@ public class PostController {
     public List<Post> fetchPostByUserId(@PathVariable("userId") Long userId){
         return postServices.fetchPostsByUserId(userId);
     }
+
+    @GetMapping("/fetch/newest")
+    public List<Post> fetchNewsPost(){
+        return postServices.fetchNewPost();
+    }
     
     @GetMapping("/by_post/{postId}")
     public List<Post> fetchPostsReplyOn(@PathVariable("postId") Long postId){
@@ -46,7 +51,7 @@ public class PostController {
     
     @PostMapping
     public Post post(@RequestBody Post p){
-        return postServices.post(p.getUserId(), p.getContent());
+        return postServices.post(p.getUserId(),p.getTitle(), p.getContent());
     }
     
     @PostMapping("/reply")

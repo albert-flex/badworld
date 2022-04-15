@@ -7,21 +7,49 @@
         <button>修改资料</button>
       </div>
       <div class="secondline">
-        <p class="user-name">夏文纯一 (100000)</p>
-        <p class="user-email">Natsufumij@163.com</p>
+        <p class="user-name">{{ my_user.username }} ({{ my_user.id }})</p>
+        <p class="user-email">{{ my_user.profile.email }}</p>
       </div>
       <div class="thirdline">
-        <p>@工作</p>
-        <p>@公司</p>
-        <p>@官网</p>
+        <p>@{{ my_user.profile.work }}</p>
+        <p>@{{ my_user.profile.company }}</p>
+        <p>@{{ my_user.profile.website }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+axios.defaults.withCredentials=true;
+axios.defaults.baseURL="/api";
+
 export default {
   name: "UserProfile",
+  props:{
+    id:Number,
+  },
+  data() {
+    return {
+      my_user: {
+        id: 0,
+        username: "",
+        profile: {
+          website: "",
+          company: "",
+          work: "",
+        },
+      },
+    };
+  },
+  mounted(){
+    axios.get("/user/fetch_with_profile/"+this.id)
+    .then(res=>{
+      if(res.status==200){
+        this.my_user=res.data;
+      }
+    })
+  }
 };
 </script>
 

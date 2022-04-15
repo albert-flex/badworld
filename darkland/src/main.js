@@ -7,6 +7,7 @@ import "@kangc/v-md-editor/lib/theme/style/github.css";
 import VMdPreview from "@kangc/v-md-editor/lib/preview";
 import "@kangc/v-md-editor/lib/style/preview.css";
 
+
 VMdEditor.use(githubTheme);
 VMdPreview.use(githubTheme);
 

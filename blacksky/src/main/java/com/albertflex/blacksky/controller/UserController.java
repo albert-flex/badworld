@@ -4,6 +4,7 @@ import com.albertflex.blacksky.domain.Profile;
 import com.albertflex.blacksky.domain.User;
 import com.albertflex.blacksky.service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,12 @@ public class UserController{
     @PostMapping("register")
     public User register(@RequestBody User user) {
         return userServices.register(user,user.getProfile()).modernPass();
+    }
+
+
+    @PostMapping("self")
+    public Long self(@AuthenticationPrincipal User user){
+        return user.getId();
     }
 
     @DeleteMapping("unregister/{id}")

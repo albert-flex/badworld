@@ -1,6 +1,19 @@
 <template>
   <div class="about-site">
     <div class="board-word">
+      <form class="board-post">
+        <p>
+          <label for="email" >邮箱:</label>
+          <input type="email" v-model="left_word.email" name="email" id="email" />
+        </p>
+        <p>
+          <label for="content">内容:</label>
+          <textarea name="content" id="content" v-model="left_word.content"></textarea>
+        </p>
+        <p>
+          <button type="submit" @click.stop.prevent="leftWord">留言</button>
+        </p>
+      </form>
       <div
         v-for="item in board_word_list"
         :key="item.id"
@@ -15,28 +28,13 @@
         </article>
       </div>
       <word-page-back />
-      <form class="board-post">
-        <p>
-          <label for="email">邮箱:</label>
-          <input type="email" name="email" id="email" />
-        </p>
-        <p>
-          <label for="content">内容:</label>
-          <textarea name="content" id="content"></textarea>
-        </p>
-        <p>
-          <button type="submit">留言</button>
-        </p>
-      </form>
     </div>
     <div class="announce">
       <article>
         <h1>{{ announce.title }}</h1>
         <h2>{{ announce.id }}</h2>
         <div class="announce-content">
-          <p v-for="item in announce.content" :key="item.id">
-            {{ item }}
-          </p>
+            <a-preview :text="announce.content"/>
         </div>
         <footer>2022/4/22 18:29</footer>
       </article>
@@ -48,11 +46,17 @@
 <script>
 import PageBack from "./PageBack.vue";
 import axios from "axios";
+import VMdPreview from "@kangc/v-md-editor/lib/preview";
+axios.defaults.baseURL="/api";
 
 export default {
   name: "AboutSite",
   data() {
     return {
+      left_word:{
+        email: "",
+        content: ""
+      },
       board_word_list: [
         {
           email: "natsufumij@163.com",
@@ -78,18 +82,41 @@ export default {
         userId: 1,
         title: "关于网站运营",
         publishTime: "2022/4/12 18:21:22",
-        content: [],
       },
     };
   },
-  methods: {},
+  methods: {
+    leftWord(){
+       console.log(this.left_word.email);
+       console.log(this.left_word.content);
+       axios.post("visit/board_word",this.left_word)
+       .then(res=>{
+          if(res.status!=200){
+            alert(res.statusText);
+          }else{
+            alert("添加成功");
+            this.board_word_list.pop();
+            this.board_word_list.unshift({
+              email: this.left_word.email,
+              content: this.left_word.content,
+              leftTime: "right now",
+            });
+            this.left_word.email='';
+            this.left_word.content='';
+          }
+       }).catch(e=>{
+         alert(e);
+       });
+    }
+  },
   components: {
     WordPageBack: PageBack,
     AnnouncePageBack: PageBack,
+    APreview: VMdPreview,
   },
   mounted() {
     axios
-      .get("http://localhost:9001/visit/board_word/newest")
+      .get("visit/board_word/newest")
       .then((response) => {
         if (response.status == 200) {
           this.board_word_list = response.data;
@@ -102,16 +129,11 @@ export default {
       });
 
     axios
-      .get("http://localhost:9001/visit/announce/newest")
+      .get("visit/announce/newest")
       .then((response) => {
         if (response.status == 200) {
           if (response.data.length != 0) {
             let data = response.data[0];
-            let words = [];
-            for (let i = 0; i != 10; ++i) {
-              words.push(data.content);
-            }
-            data.content = words;
             this.announce = data;
           }
         } else {
@@ -165,11 +187,18 @@ export default {
 }
 
 .board-post {
+  opacity: 0.2;
   padding: 20px;
   margin: 20px;
   background-color: #2c3e50;
   border-radius: 20px;
   color: white;
+  position: sticky;
+  top: 90px;
+}
+
+.board-post:hover{
+  opacity: 0.9;
 }
 
 .board-post p {

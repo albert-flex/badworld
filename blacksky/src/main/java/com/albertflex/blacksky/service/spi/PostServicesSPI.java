@@ -28,6 +28,11 @@ public class PostServicesSPI implements PostServices{
     }
 
     @Override
+    public List<Post> fetchNewPost() {
+        return postMapper.fetchNewsPosts(10);
+    }
+
+    @Override
     public List<Post> fetchPostsByUserId(Long userId) {
         return postMapper.fetchPostsByUserId(userId);
     }
@@ -38,9 +43,10 @@ public class PostServicesSPI implements PostServices{
     }
 
     @Override
-    public Post post(Long userId, String content) {
+    public Post post(Long userId,String title, String content) {
         Post p=new Post();
         p.setContent(content);
+        p.setTitle(title);
         p.setUserId(userId);
         int result=postMapper.post(p);
         if(result==0) return EMPTY_POST;
@@ -56,6 +62,7 @@ public class PostServicesSPI implements PostServices{
         
         Post p=new Post();
         p.setContent(content);
+        p.setTitle("回复");
         p.setUserId(userId);
         p.setReplyPostId(repliedId);
         postMapper.post(p);

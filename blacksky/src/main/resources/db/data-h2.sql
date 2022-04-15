@@ -72,16 +72,17 @@ insert into `announce` (`id`,`user_id`,`title`,`content`) values
 (113,100,'Official Website14','XXXXXXXX5');
 
 delete from `board_word`;
-insert into `board_word` (`id`,`email`,`title`,`content`) values
-(100,'kaka@qq.com','Official Website','XXXXXXXX'),
-(101,'kaka0@qq.com','Official Website2','XXXXXXXX2'),
-(102,'kaka1@qq.com','Official Website3','XXXXXXXX3'),
-(103,'kaka2@qq.com','Official Website4','XXXXXXXX4'),
-(104,'kaka3@qq.com','Official Website4','XXXXXXXX4'),
-(105,'kaka4@qq.com','Official Website4','XXXXXXXX4'),
-(106,'kaka5@qq.com','Official Website4','XXXXXXXX4'),
-(107,'kaka6@qq.com','Official Website4','XXXXXXXX4'),
-(108,'kaka7@qq.com','Official Website4','XXXXXXXX4'),
-(109,'kaka8@qq.com','Official Website4','XXXXXXXX4'),
-(110,'kaka9@qq.com','Official Website4','XXXXXXXX4'),
-(111,'kaka10@qq.com','Official Website5','XXXXXXXX5');
+insert into `board_word` (`id`,`email`,`content`) values
+(100,'kaka@qq.com','XXXXXXXX'),
+(101,'kaka@qq.com','XXXXXXXX'),
+(102,'kaka@qq.com','XXXXXXXX'),
+(103,'kaka@qq.com','XXXXXXXX'),
+(104,'kaka@qq.com','XXXXXXXX'),
+(105,'kaka@qq.com','XXXXXXXX'),
+(106,'kaka@qq.com','XXXXXXXX'),
+(107,'kaka@qq.com','XXXXXXXX'),
+(108,'kaka@qq.com','XXXXXXXX'),
+(109,'kaka@qq.com','XXXXXXXX'),
+(110,'kaka@qq.com','XXXXXXXX'),
+(111,'kaka@qq.com','XXXXXXXX'),
+(112,'kaka@qq.com','XXXXXXXX');

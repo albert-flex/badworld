@@ -5,25 +5,31 @@
 <mapper namespace="com.albertflex.blacksky.mapper.PostMapper">
     <select id="fetchPost" resultType="com.albertflex.blacksky.domain.Post">
         select
-        id,user_id,create_time,content,reply_count,reply_post_id
+        id,title,user_id,create_time,content,reply_count,reply_post_id
         from post where id=#{id}
+    </select>
+
+    <select id="fetchNewsPosts" resultType="com.albertflex.blacksky.domain.Post">
+        select
+        id,title,user_id,create_time,content,reply_count,reply_post_id
+        from post order by create_time desc limit #{size}
     </select>
 
     <select id="fetchPostsByUserId" resultType="com.albertflex.blacksky.domain.Post">
         select
-        id,user_id,create_time,content,reply_count,reply_post_id
+        id,title,user_id,create_time,content,reply_count,reply_post_id
         from post where user_id=#{userId}
     </select>
 
     <select id="fetchPostsReplyOn" resultType="com.albertflex.blacksky.domain.Post">
         select
-        id,user_id,create_time,content,reply_count,reply_post_id
+        id,title,user_id,create_time,content,reply_count,reply_post_id
         from post where reply_post_id=#{postId}
     </select>
 
     <insert id="post" useGeneratedKeys="true" keyProperty="id">
-        insert into post(user_id,content,reply_post_id)
-        values(#{userId},#{content},#{replyPostId})
+        insert into post(user_id,content,title,reply_post_id)
+        values(#{userId},#{content},#{title},#{replyPostId})
     </insert>
 
     <delete id="deletePost">

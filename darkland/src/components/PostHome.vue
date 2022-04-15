@@ -7,8 +7,8 @@
         :style="showPost ? 'display:block' : 'display:none'"
       >
         <p>
-          <input type="text" placeholder="输入标题..." />
-          <button type="submit">发送</button>
+          <input type="text" placeholder="输入标题..." v-model="post_data.title"/>
+          <button type="submit" @click.stop.prevent="post">发送</button>
           <button @click.stop.prevent="closePost">关闭</button>
         </p>
         <p>
@@ -16,11 +16,12 @@
             name="content"
             id="content"
             placeholder="请输入帖子内容..."
+            v-model="post_data.content"
           ></textarea>
         </p>
       </form>
 
-      <a-user-profile />
+      <a-user-profile :id="id"/>
       <ul class="post-button">
         <li><button @click="openPost">分享生活</button></li>
         <li><button>看自己</button></li>
@@ -59,18 +60,18 @@
       </form>
     </div>
     <div class="content">
-      <article class="get-to" v-for="item in itemlength" :key="item.id">
+      <div v-for="item in items" :key="item.id">
+
+      <article class="get-to" v-if="item.userId==id">
         <div class="left0">
           <div class="bar">
-            <h1 class="push">这是标题标题标题</h1>
-            <button>回复(200)</button>
-            <p>20分钟前</p>
+            <h1 class="push">{{item.title}}</h1>
+            <button>回复({{item.replyCount}})</button>
+            <p>{{item.createTime}}</p>
           </div>
           <div class="post-content">
             <p>
-              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
-              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
-              一想到以后还会有手表会丢掉，心里还是会痛的。
+              {{item.content}}
             </p>
             <span class="lefttriangle"></span>
           </div>
@@ -83,33 +84,30 @@
           </div>
         </div>
       </article>
-      <article class="get-to">
+      <article class="get-to" v-if="item.userId!=id">
         <div class="right0">
           <div class="bar"></div>
           <div>
             <img src="../assets/backpaper.png" />
-            <p>夏文纯一</p>
+            <p>{{ item.userId }}</p>
           </div>
         </div>
         <div class="left0">
           <div class="bar">
-            <h1 class="push">这是标题标题标题</h1>
-            <button>回复(200)</button>
-            <p>20分钟前</p>
+            <h1 class="push">{{item.title}}</h1>
+            <button>回复({{item.replyCount}})</button>
+            <p>{{item.createTime}}</p>
           </div>
           <div class="post-content">
-            <span class="righttriangle"></span>
             <p>
-              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
-              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
-              一想到以后还会有手表会丢掉，心里还是会痛的。
-              几天前，我的手表找不到了。明明那是我最喜欢的手表，但是却在洗完澡后不知所踪，虽然我
-              知道旧的不去新的不来，可是那也是我最喜欢的手表，回想起来，已经有十年的戴表年龄了，
-              一想到以后还会有手表会丢掉，心里还是会痛的。
+              {{item.content}}
             </p>
+            <span class="lefttriangle"></span>
           </div>
         </div>
       </article>
+            </div>
+
       <a-page-back />
     </div>
   </div>
@@ -119,13 +117,31 @@
 import PageBack from "./PageBack.vue";
 import UserProfile from "./UserProfile.vue";
 import MaskBack from "./MaskBack.vue";
+import axios from 'axios';
 
 export default {
   name: "PostHome",
+  props:{
+    id: Number,
+  },
   data() {
     return {
       itemlength: [1, 2, 3, 4, 5, 6, 7, 8],
+      items:[
+        {
+          title: "标题标题标题",
+          userId:0,
+          createTime:'20202',
+          content: 'aksahdas',
+          replyCount:100,
+        }
+      ],
       showPost: false,
+      post_data:{
+        userId: 0,
+        title:'标题',
+        content:'内容',
+      }
     };
   },
   components: {
@@ -141,7 +157,32 @@ export default {
     openPost() {
       this.showPost = true;
     },
+    post(){
+      this.post_data.userId=this.id;
+      axios.post("/post",this.post_data)
+      .then(res=>{
+        if(res.status==200){
+          alert("成功");
+        }else{
+          alert("失败");
+        }
+      }).catch(e=>{
+        alert(e);
+      })
+    }
   },
+  mounted(){
+    axios.get("/post/fetch/newest")
+    .then(res=>{
+      if(res.status==200){
+        this.items=res.data;
+      }else{
+        alert(res.statusText);
+      }
+    }).catch(e=>{
+      alert(e);
+    })
+  }
 };
 </script>
 

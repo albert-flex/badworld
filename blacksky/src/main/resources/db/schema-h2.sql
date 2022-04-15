@@ -40,7 +40,6 @@ drop table if exists `board_word`;
 create table `board_word`(
     `id` bigint not null auto_increment,
     `email` varchar(40) not null,
-    `title` varchar(40) not null default 'No-Title',
     `content` varchar,
     `left_time` datetime not null default now(),
     primary key(`id`)
@@ -61,6 +60,7 @@ drop table if exists `post`;
 create table `post`(
     `id` bigint not null auto_increment,
     `user_id` bigint not null,
+    `title` varchar(256) not null default 'no-title',
     `create_time` datetime not null default now(),
     `content` varchar(1024) not null,
     `reply_count` int not null default 0,

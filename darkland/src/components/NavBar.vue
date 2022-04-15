@@ -52,10 +52,13 @@
 
 <script>
 import MaskBack from "./MaskBack.vue";
+import axios from "axios";
+axios.defaults.withCredentials=true;
+axios.defaults.baseURL="/api";
 
 export default {
   name: "NavBar",
-  emits: ["toHome", "toAboutSite"],
+  emits: ["toHome", "toAboutSite","logined"],
   data() {
     return {
       //TODO: Login
@@ -83,9 +86,42 @@ export default {
       this.showRegister = false;
     },
     login() {
-      //TODO: Login
+      let params=new FormData();
+      params.append("username","albert");
+      params.append("password","moeyui0624");
+      let config ={
+        headers: {"Content-Type":"application/x-www-form-urlencoded"}
+      };
+      let url="login";
+      axios.post(url,params,config)
+      .then(response=>{
+        if(response.status==200){
+          alert("登录成功!");
+          this.isLogined=true;
+          this.$emit("logined");
+        }else{
+          alert("登录失败");
+        }
+      }).catch(error=>{
+        alert(error);
+      })
     },
-    register() {},
+    register() {
+        let url="artifact/1";
+        let config ={
+        headers: {"Content-Type":"application/json"}
+      };
+        axios.get(url,null,config)
+        .then(response=>{
+        if(response.status==200){
+          alert("查询成功!");
+        }else{
+          alert("查询失败");
+        }
+      }).catch(error=>{
+        alert(error);
+      })
+    },
     toRegister() {
       this.openRegisterForm();
     },
