@@ -163,6 +163,10 @@ export default {
       .then(res=>{
         if(res.status==200){
           alert("成功");
+          this.post_data.createTime='刚才';
+          this.post_data.replyCount=0;
+          this.items.unshift(this.post_data);
+          this.closePost();
         }else{
           alert("失败");
         }

@@ -40,7 +40,10 @@
       </form>
     </div>
     <div class="main">
-      <component :is="compName" @view="view" :is-view="isView" :view-id="viewId"/>
+      <component :is="compName" 
+      @view="view" 
+      @back="toPack"
+      :is-view="isView" :view-id="viewId" :user-id="id"/>
     </div>
   </div>
 </template>
@@ -81,6 +84,11 @@ export default {
     },
     toWrite(){
       this.viewId=-1;
+      this.isView=false;
+      this.nowComp=this.comps[1];
+    },
+    toEdit(id){
+      this.viewId=id;
       this.isView=false;
       this.nowComp=this.comps[1];
     },

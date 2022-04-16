@@ -11,7 +11,7 @@
   <form class="login-box" id="login-box" :style="showLogin?'display:block':'display:none'">
       <p>
         <label for="username">用户名:</label>
-        <input type="text" name="username" id="username" v-model="loginData.username"/>
+        <input type="text" name="username" id="username" v-model="loginData.userName"/>
       </p>
       <p>
         <label for="password">密 码:</label>
@@ -30,7 +30,7 @@
   <form class="register-box" :style="showRegister?'display:block':'display:none'">
     <p>
       <label for="username2">用户名:</label>
-      <input type="text" name="username2" id="username2" v-model="registerData.username">
+      <input type="text" name="username2" id="username2" v-model="registerData.userName">
     </p>
     <p>
       <label for="password2">密 码:</label>
@@ -65,11 +65,11 @@ export default {
       showLogin: false,
       showRegister: false,
       loginData: {
-        username:"",
+        userName:"",
         password:"",
       },
       registerData: {
-        username:"",
+        userName:"",
         password:"",
         profile: {
           email:"",
@@ -98,7 +98,7 @@ export default {
     },
     login() {
       let params=new FormData();
-      params.append("username",this.loginData.username);
+      params.append("username",this.loginData.userName);
       params.append("password",this.loginData.password);
       let config ={
         headers: {"Content-Type":"application/x-www-form-urlencoded"}
@@ -119,7 +119,7 @@ export default {
     },
     register() {
         let url="/user/register";
-        axios.post(url,this.loginData)
+        axios.post(url,this.registerData)
         .then(response=>{
         if(response.status==200){
           alert("查询成功!");
