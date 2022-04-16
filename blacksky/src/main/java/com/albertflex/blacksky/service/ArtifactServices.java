@@ -20,6 +20,8 @@ public interface ArtifactServices {
     ArtifactType fetchType(Long typeId);
 
     List<Artifact> fetchNews();
+
+    List<ArtifactType> fetchNewsType();
     
     List<ArtifactType> fetchTypes(String name);
     List<Artifact> fetchArtifacts(String name);

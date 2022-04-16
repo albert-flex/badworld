@@ -18,7 +18,7 @@ public class User implements UserDetails {
     //default   1 Normal
     //          2 Login
     //          3 Locked
-    private Integer state;
+    private Integer state=1;
 
     private Profile profile;
 

@@ -35,6 +35,12 @@
         from artifact
         order by id desc limit #{size}
     </select>
+
+    <select id="fetchNewsType" resultType="com.albertflex.blacksky.domain.ArtifactType">
+        select id,name,create_time,user_id
+        from artifact_type
+        order by name desc
+    </select>
     
     <select id="fetchType" resultType="com.albertflex.blacksky.domain.ArtifactType">
         select id,name,create_time,user_id

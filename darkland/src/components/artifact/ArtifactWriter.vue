@@ -3,34 +3,54 @@
     <div class="head">
       <div class="avator">
         <img alt="用户头像" src="./default.png" />
-        <input type="file" name="avataor" id="avator-button" v-if="!isView"/>
+        <input type="file" name="avataor" id="avator-button" v-if="!isView" />
       </div>
       <div class="data" v-if="!isView">
         <p>
           <label for="name">名称</label>
-          <input type="text" name="name" id="name" :disabled="isView"/>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            :disabled="isView"
+            v-model="artifact.name"
+          />
         </p>
         <p>
           <label for="name">标题</label>
-          <input type="text" name="title" id="title" :disabled="isView"/>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            :disabled="isView"
+            v-model="artifact.title"
+          />
         </p>
         <p>
           <label for="type">类型</label>
-          <select name="type" id="type" :disabled="isView">
-            <option value="1">游戏</option>
-            <option value="2">音乐</option>
-            <option value="3">漫画</option>
-            <option value="4">小说</option>
+          <select
+            name="type"
+            id="type"
+            :disabled="isView"
+            v-model="artifact.typeId"
+          >
+            <option v-for="item in types" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
           <button @click="addNewType">+</button>
         </p>
         <p>
           <label for="version">版本</label>
-          <input type="text" name="version" id="version" :disabled="isView"/>
+          <input
+            type="text"
+            name="version"
+            id="version"
+            :disabled="isView"
+            v-model="artifact.version"
+          />
         </p>
         <div class="tools">
           <button>取消</button>
-          <button>完成</button>
+          <button @click="postArtifact">完成</button>
         </div>
       </div>
       <div class="data2" v-if="isView">
@@ -48,7 +68,7 @@
         </p>
         <p>
           <label for="version">版本</label>
-          <label>{{artifact.version}}</label>
+          <label>{{ artifact.version }}</label>
         </p>
       </div>
     </div>
@@ -61,6 +81,7 @@
         class="content-area"
         height="800px"
         :text="artifact.content"
+        v-model="artifact.content"
       />
     </div>
   </div>
@@ -70,26 +91,43 @@
 import VMdEditor from "@kangc/v-md-editor";
 import VMdPreview from "@kangc/v-md-editor/lib/preview";
 import axios from "axios";
-axios.defaults.withCredentials=true;
-axios.defaults.baseURL="/api";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "ArtifactWriter",
-  props:{
+  emits:["back"],
+  props: {
     viewId: Number,
     isView: Boolean,
+    userId: Number,
   },
   data() {
     return {
-      editId:-1,
-      artifact:{
+      editId: -1,
+      types: [
+        {
+          id: 0,
+          name: "游戏",
+        },
+        {
+          id: 1,
+          name: "音乐",
+        },
+        {
+          id: 2,
+          name: "绘画",
+        },
+      ],
+      artifact: {
         id: 0,
+        userId: 0,
         name: "名称",
         title: "标题",
-        type: 0,
+        typeId: 0,
         version: "0",
-        content:"",
-      }
+        content: "",
+      },
     };
   },
   computed: {
@@ -101,26 +139,77 @@ export default {
     AEditor: VMdEditor,
     AView: VMdPreview,
   },
-  methods:{
-    addNewType(){
-      let name=prompt("请输入需要添加的新类型","default");
-      console.log(name);
-    }
+  methods: {
+    addNewType() {
+      let aname = prompt("请输入需要添加的新类型", "default");
+      axios.post("artifact/type",{name: aname,userId: this.userId})
+      .then(res=>{
+        if(res.status==200){
+          this.fetchTypeNews();          
+        }else{
+          alert(res.statusText);
+        }
+      }).catch(e=>{
+        alert(e);
+      });
+    },
+    fetchTypeName(id){
+      for(let i=0;i!=this.types.length;++i){
+        let a =this.types[i];
+        if(a.id==id){
+          return a.name;
+        }
+      }
+      return "未知";
+    },
+    postArtifact() {
+      this.artifact.userId =this.userId;
+       axios
+        .post("artifact", this.artifact)
+        .then((res) => {
+          if (res.status == 200) {
+            alert("成功");
+            this.$emit("back");
+          } else {
+            alert("失败");
+          }
+        });
+    },
+    fetchTypeNews() {
+      axios
+        .get("artifact/fetch/newstype")
+        .then((res) => {
+          if (res.status == 200) {
+            this.types= res.data;
+          } else {
+            alert(res.statusText);
+            return [];
+          }
+        })
+        .catch((e) => {
+          alert(e);
+          return [];
+        });
+    },
   },
-  mounted(){
-    if(this.isView){
-        axios.get("artifact/"+this.viewId)
-        .then(res=>{
-          if(res.status==200){
-            this.artifact=res.data;
-          }else{
+  mounted() {
+    this.fetchTypeNews();
+    if (this.isView) {
+      axios
+        .get("artifact/" + this.viewId)
+        .then((res) => {
+          if (res.status == 200) {
+            this.artifact = res.data;
+            this.artifact.type=this.fetchTypeName(res.data.typeId);
+          } else {
             alert(res.statusText);
           }
-        }).catch(e=>{
+        })
+        .catch((e) => {
           alert(e);
         });
     }
-  }
+  },
 };
 </script>
 
@@ -149,12 +238,13 @@ export default {
   width: 50%;
 }
 
-.data ,.data2{
+.data,
+.data2 {
   width: 50%;
   padding: 2%;
 }
 
-.data2 p label{
+.data2 p label {
   width: 40%;
   margin: 5%;
   padding: 5%;

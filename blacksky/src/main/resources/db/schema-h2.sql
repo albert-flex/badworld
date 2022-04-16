@@ -82,7 +82,7 @@ create table `artifact`(
     `id` bigint not null auto_increment,
     `user_id` bigint not null,
     `type_id` bigint not null,
-    `name` varchar(40) not null unique,
+    `name` varchar(40) not null,
     `version` varchar(40) not null,
     `create_time` datetime not null default now(),
     `update_time` datetime not null default now(),
