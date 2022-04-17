@@ -7,7 +7,11 @@
         :style="showPost ? 'display:block' : 'display:none'"
       >
         <p>
-          <input type="text" placeholder="输入标题..." v-model="post_data.title"/>
+          <input
+            type="text"
+            placeholder="输入标题..."
+            v-model="post_data.title"
+          />
           <button type="submit" @click.stop.prevent="post">发送</button>
           <button @click.stop.prevent="closePost">关闭</button>
         </p>
@@ -21,7 +25,7 @@
         </p>
       </form>
 
-      <a-user-profile :id="id"/>
+      <a-user-profile :id="id" />
       <ul class="post-button">
         <li><button @click="openPost">分享生活</button></li>
         <li><button>看自己</button></li>
@@ -30,83 +34,78 @@
         <h1>查询帖子</h1>
         <p>
           <label for="uid">用户Id</label>
-          <input type="text" name="uid" id="uid" />
-        </p>
-        <p>
-          <label for="ureplyid">被回复的用户Id</label>
-          <input type="text" name="ureplyid" id="ureplyid" />
+          <input type="text" name="uid" id="uid" v-model="query_data.userId"/>
         </p>
         <p>
           <label for="uname">用户名</label>
-          <input type="text" name="uname" id="uname" />
+          <input type="text" name="uname" id="uname" v-model="query_data.userName"/>
         </p>
         <p>
           <label for="title">帖子标题</label>
-          <input type="text" name="title" id="title" />
+          <input type="text" name="title" id="title" v-model="query_data.title"/>
         </p>
         <p>
           <label for="timefrom">时间起点</label>
-          <input type="date" name="timefrom" id="timefrom" />
+          <input type="date" name="timefrom" id="timefrom" v-model="query_data.startDate" />
         </p>
         <p>
           <label for="timeend">时间终点</label>
-          <input type="date" name="timeend" id="timeend" />
+          <input type="date" name="timeend" id="timeend" v-model="query_data.endDate"/>
         </p>
         <div class="tool">
-          <button type="submit">查询</button>
-          <button>清空</button>
-          <button>最新</button>
+          <button @click.stop.prevent="query">查询</button>
+          <button @click.stop.prevent="clearQuery">清空</button>
+          <button @click.stop.prevent="getNews">最新</button>
         </div>
       </form>
     </div>
     <div class="content">
       <div v-for="item in items" :key="item.id">
-
-      <article class="get-to" v-if="item.userId==id">
-        <div class="left0">
-          <div class="bar">
-            <h1 class="push">{{item.title}}</h1>
-            <button>回复({{item.replyCount}})</button>
-            <p>{{item.createTime}}</p>
-          </div>
-          <div class="post-content">
-            <p>
-              {{item.content}}
-            </p>
-            <span class="righttriangle"></span>
-          </div>
-        </div>
-        <div class="right0">
-          <div class="bar"></div>
-          <div>
-            <img src="../assets/backpaper.png" />
-            <p>我</p>
-          </div>
-        </div>
-      </article>
-      <article class="get-to" v-if="item.userId!=id">
-        <div class="right0">
-          <div class="bar"></div>
-          <div>
-            <img src="../assets/backpaper.png" />
-            <p>{{ item.userId }}</p>
-          </div>
-        </div>
-        <div class="left0">
-          <div class="bar">
-            <h1 class="push">{{item.title}}</h1>
-            <button>回复({{item.replyCount}})</button>
-            <p>{{item.createTime}}</p>
-          </div>
-          <div class="post-content">
-            <span class="lefttriangle"></span>
-            <p>
-              {{item.content}}
-            </p>
-          </div>
-        </div>
-      </article>
+        <article class="get-to" v-if="item.userId == id">
+          <div class="left0">
+            <div class="bar">
+              <h1 class="push">{{ item.title }}</h1>
+              <button>回复({{ item.replyCount }})</button>
+              <p>{{ item.createTime }}</p>
             </div>
+            <div class="post-content">
+              <p>
+                {{ item.content }}
+              </p>
+              <span class="righttriangle"></span>
+            </div>
+          </div>
+          <div class="right0">
+            <div class="bar"></div>
+            <div>
+              <img src="../assets/backpaper.png" />
+              <p>我</p>
+            </div>
+          </div>
+        </article>
+        <article class="get-to" v-if="item.userId != id">
+          <div class="right0">
+            <div class="bar"></div>
+            <div>
+              <img src="../assets/backpaper.png" />
+              <p>{{ item.userId }}</p>
+            </div>
+          </div>
+          <div class="left0">
+            <div class="bar">
+              <h1 class="push">{{ item.title }}</h1>
+              <button>回复({{ item.replyCount }})</button>
+              <p>{{ item.createTime }}</p>
+            </div>
+            <div class="post-content">
+              <span class="lefttriangle"></span>
+              <p>
+                {{ item.content }}
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
 
       <a-page-back />
     </div>
@@ -117,31 +116,38 @@
 import PageBack from "./PageBack.vue";
 import UserProfile from "./UserProfile.vue";
 import MaskBack from "./MaskBack.vue";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "PostHome",
-  props:{
+  props: {
     id: Number,
   },
   data() {
     return {
       itemlength: [1, 2, 3, 4, 5, 6, 7, 8],
-      items:[
+      items: [
         {
           title: "标题标题标题",
-          userId:0,
-          createTime:'20202',
-          content: 'aksahdas',
-          replyCount:100,
-        }
+          userId: 0,
+          createTime: "20202",
+          content: "aksahdas",
+          replyCount: 100,
+        },
       ],
       showPost: false,
-      post_data:{
+      post_data: {
         userId: 0,
-        title:'标题',
-        content:'内容',
-      }
+        title: "标题",
+        content: "内容",
+      },
+      query_data: {
+        userId: 0,
+        userName: " ",
+        title: " ",
+        startDate: "",
+        endDate: "",
+      },
     };
   },
   components: {
@@ -157,36 +163,73 @@ export default {
     openPost() {
       this.showPost = true;
     },
-    post(){
-      this.post_data.userId=this.id;
-      axios.post("/post",this.post_data)
-      .then(res=>{
-        if(res.status==200){
-          alert("成功");
-          this.post_data.createTime='刚才';
-          this.post_data.replyCount=0;
-          this.items.unshift(this.post_data);
-          this.closePost();
-        }else{
-          alert("失败");
-        }
-      }).catch(e=>{
-        alert(e);
-      })
-    }
+    post() {
+      this.post_data.userId = this.id;
+      axios
+        .post("post", this.post_data)
+        .then((res) => {
+          if (res.status == 200) {
+            alert("成功");
+            this.post_data.createTime = "刚才";
+            this.post_data.replyCount = 0;
+            this.items.unshift(this.post_data);
+            this.closePost();
+          } else {
+            alert("失败");
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
+    query() {
+      let params = new FormData();
+      params.append("userId", this.query_data.userId);
+      params.append("userName", this.query_data.userName);
+      params.append("title", this.query_data.title);
+      params.append("startDate", this.query_data.startDate);
+      params.append("endDate", this.query_data.endDate);
+      let config = {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      };
+      axios
+        .get("post/query", params, config)
+        .then((res) => {
+          if (res.status == 200) {
+            this.items = res.data;
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
+    clearQuery(){
+        this.query_data.userId=0;
+        this.query_data.userName='';
+        this.query_data.title='';
+        this.query_data.startDate='';
+        this.query_data=endDate='';
+    },
+    getNews() {
+      axios
+        .get("/post/fetch/newest")
+        .then((res) => {
+          if (res.status == 200) {
+            this.items = res.data;
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
   },
-  mounted(){
-    axios.get("/post/fetch/newest")
-    .then(res=>{
-      if(res.status==200){
-        this.items=res.data;
-      }else{
-        alert(res.statusText);
-      }
-    }).catch(e=>{
-      alert(e);
-    })
-  }
+  mounted() {
+    this.getNews();
+  },
 };
 </script>
 
@@ -363,15 +406,13 @@ button {
 
 .post-content p {
   text-indent: 2em;
-  width:100%;
+  width: 100%;
   margin: 0px;
   background-color: cadetblue;
   border-radius: 10px;
   padding: 2% 3%;
   display: flex;
 }
-
-
 
 .push {
   margin-right: auto;
@@ -386,12 +427,12 @@ button {
   padding-bottom: 0px;
 }
 
-.left0{
-  width:80%;
+.left0 {
+  width: 80%;
 }
 
-.right{
-  width:20%;
+.right {
+  width: 20%;
 }
 
 .right0 p {
@@ -406,7 +447,7 @@ button {
   height: 100px;
 }
 
-.lefttriangle{
+.lefttriangle {
   width: 0px;
   height: 0px;
   border-top: 8px solid transparent;
@@ -425,5 +466,4 @@ button {
   top: 10px;
   position: relative;
 }
-
 </style>

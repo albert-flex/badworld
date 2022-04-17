@@ -94,7 +94,6 @@ public class ArtifactController {
         return artifact;
     }
 
-
     @PutMapping
     public Boolean update(@RequestBody Artifact artifact) {
         return artifactServices.update(artifact);

@@ -64,6 +64,14 @@ export default {
       comps: ["AArtifactPack","AArtifactWrite"],
       isView: true,
       viewId: -1,
+      query:{
+        id: 0,
+        userId:0,
+        userName: '',
+        title: '',
+        startDate: '',
+        endDate: ''
+      }
     }
   },
   computed:{
@@ -96,7 +104,51 @@ export default {
       this.viewId=-1;
       this.isView=false;
       this.nowComp=this.comps[0];
-    }
+    },
+        query() {
+      let params = new FormData();
+      params.append("userId", this.query_data.userId);
+      params.append("userName", this.query_data.userName);
+      params.append("title", this.query_data.title);
+      params.append("startDate", this.query_data.startDate);
+      params.append("endDate", this.query_data.endDate);
+      let config = {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      };
+      axios
+        .get("post/query", params, config)
+        .then((res) => {
+          if (res.status == 200) {
+            this.items = res.data;
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
+    clearQuery(){
+        this.query_data.userId=0;
+        this.query_data.userName='';
+        this.query_data.title='';
+        this.query_data.startDate='';
+        this.query_data=endDate='';
+    },
+    getNews() {
+      axios
+        .get("/post/fetch/newest")
+        .then((res) => {
+          if (res.status == 200) {
+            this.items = res.data;
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
   }
 };
 </script>
