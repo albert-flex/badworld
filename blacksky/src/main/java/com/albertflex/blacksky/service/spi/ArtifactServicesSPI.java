@@ -6,6 +6,7 @@ package com.albertflex.blacksky.service.spi;
 import com.albertflex.blacksky.domain.Artifact;
 import com.albertflex.blacksky.domain.ArtifactType;
 import com.albertflex.blacksky.mapper.ArtifactMapper;
+import com.albertflex.blacksky.query.ArtifactQuery;
 import com.albertflex.blacksky.service.ArtifactServices;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,11 @@ public class ArtifactServicesSPI implements ArtifactServices {
     @Override
     public List<Artifact> fetchNews() {
         return artifactMapper.fetchNews(10);
+    }
+
+    @Override
+    public List<Artifact> query(ArtifactQuery query) {
+        return artifactMapper.query(query);
     }
 
     @Override

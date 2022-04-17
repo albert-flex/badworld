@@ -5,7 +5,10 @@ package com.albertflex.blacksky.controller;
 
 import com.albertflex.blacksky.domain.Artifact;
 import com.albertflex.blacksky.domain.ArtifactType;
+import com.albertflex.blacksky.query.ArtifactQuery;
 import com.albertflex.blacksky.service.ArtifactServices;
+
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,6 +55,13 @@ public class ArtifactController {
         return artifactServices.fetchNews();
     }
 
+    @GetMapping("/query")
+    public List<Artifact> query(ArtifactQuery query){
+        if(query==null)return Collections.emptyList();
+
+        return artifactServices.query(query);
+    }
+
     @GetMapping("/fetch/newstype")
     public List<ArtifactType> fetchNewsType(){
         return artifactServices.fetchNewsType();
@@ -83,6 +93,7 @@ public class ArtifactController {
         artifactServices.newArtifact(artifact);
         return artifact;
     }
+
 
     @PutMapping
     public Boolean update(@RequestBody Artifact artifact) {

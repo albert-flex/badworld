@@ -5,6 +5,7 @@ package com.albertflex.blacksky.service;
 
 import com.albertflex.blacksky.domain.Artifact;
 import com.albertflex.blacksky.domain.ArtifactType;
+import com.albertflex.blacksky.query.ArtifactQuery;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface ArtifactServices {
     ArtifactType fetchType(Long typeId);
 
     List<Artifact> fetchNews();
+
+    List<Artifact> query(ArtifactQuery query);
 
     List<ArtifactType> fetchNewsType();
     

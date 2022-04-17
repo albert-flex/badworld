@@ -1,6 +1,7 @@
 package com.albertflex.blacksky.mapper;
 
 import com.albertflex.blacksky.domain.Post;
+import com.albertflex.blacksky.query.PostQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,6 +17,8 @@ public interface PostMapper {
     List<Post> fetchPostsByUserId(Long userId);
 
     List<Post> fetchNewsPosts(Integer size);
+
+    List<Post> query(PostQuery query);
     
     //根据帖子Id获取所有直接的回复帖子
     List<Post> fetchPostsReplyOn(Long postId);

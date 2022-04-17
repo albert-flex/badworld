@@ -47,7 +47,7 @@
         from artifact_type
         where id=#{typeId}
     </select>
-    
+
     <select id="fetchTypes" resultType="com.albertflex.blacksky.domain.ArtifactType">
         select id,name,create_time,user_id
         from artifact_type
@@ -60,6 +60,44 @@
             create_time,update_time,title,content
         from artifact
         where name like concat('%',#{name},'%')
+    </select>
+
+    <!--
+        private Long artifactId;
+        private Long userId;
+        private String userName;
+        private String name;
+        private Date startDate;
+        private Date endDate;
+    -->
+    <select id="query" resultType="com.albertflex.blacksky.domain.Artifact">
+        select
+            a.id as id,a.user_id as user_id,a.type_id as type_id,
+            a.name as name,a.version as version,
+            a.create_time as create_time,a.update_time as update_time,
+            a.title as title,a.content as content
+        from artifact a
+        left join user u on u.id=a.user_id
+        <where>
+            <if test="artifactId!=null">
+                and a.id=#{artifactId}
+            </if>
+            <if test="userId!=null">
+                and u.id=#{userId}
+            </if>
+            <if test="userName!=null">
+                and u.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="name!=null">
+                and a.name like concat('%',#{name},'%')
+            </if>
+            <if test="startDate!=null">
+                and a.create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                and a.create_time &lt;= #{endDate}
+            </if>
+        </where>
     </select>
     
     <insert id="newType" keyProperty="id" useGeneratedKeys="true">

@@ -21,6 +21,36 @@
         from post where user_id=#{userId}
     </select>
 
+    <!--
+    private Long userId;
+    private String userName;
+    private String title;
+    private Date startDate;
+    private Date endDate;
+    -->
+    <select id="query" resultType="com.albertflex.blacksky.domain.Post">
+        select
+        from post p
+        left join user u1 on u.id=post.user_id
+        <where>
+            <if test="userId!=null">
+                and u1.id=#{userId}
+            </if>
+            <if test="userName!=null">
+                and u1.user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="title">
+                and p.title=#{title}
+            </if>
+            <if test="startDate!=null">
+                and p.create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                and p.create &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
     <select id="fetchPostsReplyOn" resultType="com.albertflex.blacksky.domain.Post">
         select
         id,title,user_id,create_time,content,reply_count,reply_post_id

@@ -3,7 +3,11 @@
 package com.albertflex.blacksky.controller;
 
 import com.albertflex.blacksky.domain.Post;
+import com.albertflex.blacksky.query.PostQuery;
 import com.albertflex.blacksky.service.PostServices;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +41,13 @@ public class PostController {
     @GetMapping("/by_user/{userId}")
     public List<Post> fetchPostByUserId(@PathVariable("userId") Long userId){
         return postServices.fetchPostsByUserId(userId);
+    }
+
+    @GetMapping("/query")
+    public List<Post> query(PostQuery query){
+        if(query==null)return Collections.emptyList();
+
+        return postServices.query(query);
     }
 
     @GetMapping("/fetch/newest")

@@ -1,6 +1,7 @@
 package com.albertflex.blacksky.service;
 
 import com.albertflex.blacksky.domain.Post;
+import com.albertflex.blacksky.query.PostQuery;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public interface PostServices {
     Post fetchPost(Long postId);
 
     List<Post> fetchNewPost();
+
+    List<Post> query(PostQuery query);
 
     List<Post> fetchPostsByUserId(Long userId);
     List<Post> fetchPostsReplyOn(Long postId);

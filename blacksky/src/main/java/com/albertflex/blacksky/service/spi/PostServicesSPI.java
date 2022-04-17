@@ -2,6 +2,7 @@ package com.albertflex.blacksky.service.spi;
 
 import com.albertflex.blacksky.domain.Post;
 import com.albertflex.blacksky.mapper.PostMapper;
+import com.albertflex.blacksky.query.PostQuery;
 import com.albertflex.blacksky.service.PostServices;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +31,11 @@ public class PostServicesSPI implements PostServices{
     @Override
     public List<Post> fetchNewPost() {
         return postMapper.fetchNewsPosts(10);
+    }
+
+    @Override
+    public List<Post> query(PostQuery query) {
+        return postMapper.query(query);
     }
 
     @Override
