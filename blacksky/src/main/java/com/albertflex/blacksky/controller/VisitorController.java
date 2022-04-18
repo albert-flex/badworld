@@ -2,6 +2,8 @@ package com.albertflex.blacksky.controller;
 
 import com.albertflex.blacksky.domain.Announce;
 import com.albertflex.blacksky.domain.BoardWord;
+import com.albertflex.blacksky.query.PageData;
+import com.albertflex.blacksky.query.PageQuery;
 import com.albertflex.blacksky.service.AnnounceServices;
 import com.albertflex.blacksky.service.BoardWordServices;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +28,9 @@ public class VisitorController {
     }
 
     @GetMapping("/announce/newest")
-    public List<Announce> newest(){
-        return announceServices.fetchNewest();
+    public PageData<Announce> newest(PageQuery page) {
+        page.start();
+        return PageData.of(announceServices.fetchNewest());
     }
 
     @PostMapping("/board_word")
@@ -42,7 +45,8 @@ public class VisitorController {
     }
 
     @GetMapping("/board_word/newest")
-    public List<BoardWord> words(){
-        return boardWordServices.fetchNewest();
+    public PageData<BoardWord> words(PageQuery page) {
+        page.start();
+        return PageData.of(boardWordServices.fetchNewest());
     }
 }

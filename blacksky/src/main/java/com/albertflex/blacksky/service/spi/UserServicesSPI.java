@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserServicesSPI implements UserServices {
 
@@ -90,6 +92,11 @@ public class UserServicesSPI implements UserServices {
 
         user.setId(dest.getId());
         return user;
+    }
+
+    @Override
+    public List<User> fetch() {
+        return userMapper.fetch();
     }
 
     @Override

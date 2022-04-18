@@ -12,7 +12,7 @@
     <select id="fetchNewsPosts" resultType="com.albertflex.blacksky.domain.Post">
         select
         id,title,user_id,create_time,content,reply_count,reply_post_id
-        from post order by create_time desc limit #{size}
+        from post order by create_time desc
     </select>
 
     <select id="fetchPostsByUserId" resultType="com.albertflex.blacksky.domain.Post">
@@ -21,32 +21,27 @@
         from post where user_id=#{userId}
     </select>
 
-    <!--
-    private Long userId;
-    private String userName;
-    private String title;
-    private Date startDate;
-    private Date endDate;
-    -->
     <select id="query" resultType="com.albertflex.blacksky.domain.Post">
-        select
+        select p.id as id,p.title as title,
+        p.user_id as user_id,p.create_time as create_time,
+        p.content as content,p.reply_count as reply_count,p.reply_post_id as reply_post_id
         from post p
-        left join user u1 on u.id=post.user_id
+        left join user u on u.id=p.user_id
         <where>
-            <if test="userId!=null">
-                and u1.id=#{userId}
+            <if test="userId!=null and userId!='0'">
+                and u.id=#{userId}
             </if>
-            <if test="userName!=null">
-                and u1.user_name like concat('%',#{userName},'%')
+            <if test="userName!=null and userName!=''">
+                and u.user_name like concat('%',#{userName},'%')
             </if>
-            <if test="title">
+            <if test="title!=null and title!=''">
                 and p.title=#{title}
             </if>
             <if test="startDate!=null">
                 and p.create_time &gt;= #{startDate}
             </if>
             <if test="endDate!=null">
-                and p.create &lt;= #{endDate}
+                and p.create_time &lt;= #{endDate}
             </if>
         </where>
     </select>

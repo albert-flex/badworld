@@ -6,10 +6,14 @@ package com.albertflex.blacksky.controller;
 import com.albertflex.blacksky.domain.Artifact;
 import com.albertflex.blacksky.domain.ArtifactType;
 import com.albertflex.blacksky.query.ArtifactQuery;
+import com.albertflex.blacksky.query.PageData;
+import com.albertflex.blacksky.query.PageQuery;
 import com.albertflex.blacksky.service.ArtifactServices;
 
 import java.util.Collections;
 import java.util.List;
+
+import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,34 +40,38 @@ public class ArtifactController {
     }
     
     @GetMapping("/by_type/{typeId}")
-    public List<Artifact> fetchByType(@PathVariable("typeId") Long typeId) {
-        return artifactServices.fetchByType(typeId);
+    public PageData<Artifact> fetchByType(@PathVariable("typeId") Long typeId, PageQuery page) {
+        page.start();
+        return PageData.of(artifactServices.fetchByType(typeId));
     }
 
     @GetMapping("/by_user/{userId}")
-    public List<Artifact> fetchByUser(@PathVariable("userId") Long userId) {
-        return artifactServices.fetchByUser(userId);
+    public PageData<Artifact> fetchByUser(@PathVariable("userId") Long userId, PageQuery page) {
+        page.start();
+        return PageData.of(artifactServices.fetchByUser(userId));
     }
 
     @GetMapping("/{artifactId}")
-    public Artifact fetch(@PathVariable("artifactId") Long artifactId) {
+    public Artifact fetch(@PathVariable("artifactId") Long artifactId){
         return artifactServices.fetch(artifactId);
     }
 
-    @GetMapping("/fetch/news")
-    public List<Artifact> fetchNews(){
-        return artifactServices.fetchNews();
+    @GetMapping("/fetch/newest")
+    public PageData<Artifact> fetchNews(PageQuery page) {
+        page.start();
+        return PageData.of(artifactServices.fetchNews());
     }
 
-    @GetMapping("/query")
-    public List<Artifact> query(ArtifactQuery query){
-        if(query==null)return Collections.emptyList();
+    @GetMapping("/fetch/query")
+    public PageData<Artifact> query(ArtifactQuery query){
+        query.start();
+        if(query==null)return PageData.empty();
 
-        return artifactServices.query(query);
+        return PageData.of(artifactServices.query(query));
     }
 
     @GetMapping("/fetch/newstype")
-    public List<ArtifactType> fetchNewsType(){
+    public List<ArtifactType> fetchNewsType(PageQuery page) {
         return artifactServices.fetchNewsType();
     }
 
@@ -73,13 +81,14 @@ public class ArtifactController {
     }
     
     @GetMapping("/types/{name}")
-    public List<ArtifactType> fetchTypes(@PathVariable("name") String name) {
+    public List<ArtifactType> fetchTypes(@PathVariable("name") String name,PageQuery page) {
         return artifactServices.fetchTypes(name);
     }
     
     @GetMapping("/artifacts/{name}")
-    public List<Artifact> fetchArtifacts(@PathVariable("name") String name) {
-        return artifactServices.fetchArtifacts(name);
+    public PageData<Artifact> fetchArtifacts(@PathVariable("name") String name,PageQuery page) {
+        page.start();
+        return PageData.of(artifactServices.fetchArtifacts(name));
     }
 
     @PostMapping("/type")

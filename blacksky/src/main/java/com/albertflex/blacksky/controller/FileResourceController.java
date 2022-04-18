@@ -1,6 +1,7 @@
 package com.albertflex.blacksky.controller;
 
 import com.albertflex.blacksky.domain.FileResource;
+import com.albertflex.blacksky.query.PageQuery;
 import com.albertflex.blacksky.service.FileResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/file_resource")
@@ -29,6 +31,11 @@ public class FileResourceController {
     @Autowired
     public FileResourceController(FileResourceServices fileResourceServices) {
         this.fileResourceServices = fileResourceServices;
+    }
+
+    public List<FileResource> list(PageQuery page) {
+        page.start();
+        return fileResourceServices.views();
     }
 
     @PostMapping("/upload")

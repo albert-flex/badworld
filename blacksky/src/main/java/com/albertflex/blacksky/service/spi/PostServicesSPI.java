@@ -30,7 +30,7 @@ public class PostServicesSPI implements PostServices{
 
     @Override
     public List<Post> fetchNewPost() {
-        return postMapper.fetchNewsPosts(10);
+        return postMapper.fetchNewsPosts();
     }
 
     @Override

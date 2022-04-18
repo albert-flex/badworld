@@ -94,7 +94,7 @@ public class ArtifactServicesSPI implements ArtifactServices {
 
     @Override
     public List<Artifact> fetchNews() {
-        return artifactMapper.fetchNews(10);
+        return artifactMapper.fetchNews();
     }
 
     @Override

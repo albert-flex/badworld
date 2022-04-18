@@ -3,12 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.albertflex.blacksky.mapper.AnnounceMapper">
-    <!--
-        int post(Announce announce);
-    Announce get(Long id);
-    List<Announce> fetchNewest();
-    int delete(Long id);
-    -->
 
     <insert id="post" keyProperty="id" useGeneratedKeys="true">
         insert into announce(user_id,title,content) values
@@ -25,7 +19,7 @@
     <select id="fetchNewest" resultType="com.albertflex.blacksky.domain.Announce">
         select id,user_id,
         title,publish_time,content
-        from announce order by id desc limit 10
+        from announce order by id desc
     </select>
 
     <delete id="delete">

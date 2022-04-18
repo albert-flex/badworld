@@ -1,49 +1,66 @@
 <template>
   <div class="content">
     <div class="aside">
-      <a-user-profile :id="id"/>
+      <a-user-profile :id="id" />
       <div class="tool">
         <button @click="toWrite">发布新作品</button>
-        <button>看自己</button>
+        <button @click="toSelf">看自己</button>
       </div>
       <form class="query-form">
         <h1>查询作品</h1>
         <p>
           <label for="aid">作品Id</label>
-          <input type="text" name="aid" id="aid" />
+          <input type="text" name="aid" id="aid" v-model="query_data.artifactId" />
         </p>
         <p>
           <label for="uid">用户Id</label>
-          <input type="text" name="uid" id="uid" />
+          <input type="text" name="uid" id="uid" v-model="query_data.userId" />
         </p>
         <p>
           <label for="uname">用户名</label>
-          <input type="text" name="uname" id="uname" />
+          <input type="text" name="uname" id="uname" v-model="query_data.userName" />
         </p>
         <p>
           <label for="title">标题</label>
-          <input type="text" name="title" id="title" />
+          <input type="text" name="title" id="title" v-model="query_data.title" />
         </p>
         <p>
           <label for="timefrom">时间起点</label>
-          <input type="date" name="timefrom" id="timefrom" />
+          <input
+            type="date"
+            name="timefrom"
+            id="timefrom"
+            v-model="query_data.startDate"
+          />
         </p>
         <p>
           <label for="timeend">时间终点</label>
-          <input type="date" name="timeend" id="timeend" />
+          <input
+            type="date"
+            name="timeend"
+            id="timeend"
+            v-model="query_data.endDate"
+          />
         </p>
         <div class="tool">
-          <button type="submit">查询</button>
-          <button>清空</button>
-          <button>最新</button>
+          <button @click.stop.prevent="query">查询</button>
+          <button @click.stop.prevent="clearQuery">清空</button>
+          <button @click.stop.prevent="getNews">最新</button>
         </div>
       </form>
     </div>
     <div class="main">
-      <component :is="compName" 
-      @view="view" 
-      @back="toPack"
-      :is-view="isView" :view-id="viewId" :user-id="id"/>
+      <component
+        :is="compName"
+        @view="view"
+        @back="toPack"
+        :is-view="isView"
+        :view-id="viewId"
+        :user-id="id"
+        :items="items"
+      />
+
+      <a-page-back :disable="compName=='AArtifactWriter'"/>
     </div>
   </div>
 </template>
@@ -51,75 +68,79 @@
 <script>
 import UserProfile from "./UserProfile.vue";
 import ArtifactPack from "./artifact/ArtifactPack.vue";
+import PageBack from "./PageBack.vue";
 import ArtifactWriter from "./artifact/ArtifactWriter.vue";
+import axios from "axios";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "ArtifactHome",
-  props:{
-    id:Number,
+  props: {
+    id: Number,
   },
-  data(){
-    return{
+  data() {
+    return {
       nowComp: "AArtifactPack",
-      comps: ["AArtifactPack","AArtifactWrite"],
+      comps: ["AArtifactPack", "AArtifactWrite"],
       isView: true,
       viewId: -1,
-      query:{
-        id: 0,
-        userId:0,
-        userName: '',
-        title: '',
-        startDate: '',
-        endDate: ''
-      }
-    }
+      query_data: {
+        artifactId: 0,
+        userId: 0,
+        userName: "",
+        title: "",
+        startDate: "",
+        endDate: "",
+        pageIndex: 1,
+        pageSize: 10
+      },
+      page:{
+        pageIndex: 1,
+        pageSize: 10
+      },
+      items: [],
+    };
   },
-  computed:{
-    compName(){
+  computed: {
+    compName() {
       return this.nowComp;
-    }
+    },
   },
   components: {
     AUserProfile: UserProfile,
     AArtifactPack: ArtifactPack,
     AArtifactWrite: ArtifactWriter,
+    APageBack: PageBack,
   },
-  methods:{
-    view(id){
-      this.viewId=id;
-      this.isView=true;
-      this.nowComp=this.comps[1];
+  methods: {
+    view(id) {
+      this.viewId = id;
+      this.isView = true;
+      this.nowComp = this.comps[1];
     },
-    toWrite(){
-      this.viewId=-1;
-      this.isView=false;
-      this.nowComp=this.comps[1];
+    toWrite() {
+      this.viewId = -1;
+      this.isView = false;
+      this.nowComp = this.comps[1];
     },
-    toEdit(id){
-      this.viewId=id;
-      this.isView=false;
-      this.nowComp=this.comps[1];
+    toEdit(id) {
+      this.viewId = id;
+      this.isView = false;
+      this.nowComp = this.comps[1];
     },
-    toPack(){
-      this.viewId=-1;
-      this.isView=false;
-      this.nowComp=this.comps[0];
+    toPack() {
+      this.viewId = -1;
+      this.isView = false;
+      this.nowComp = this.comps[0];
     },
-        query() {
-      let params = new FormData();
-      params.append("userId", this.query_data.userId);
-      params.append("userName", this.query_data.userName);
-      params.append("title", this.query_data.title);
-      params.append("startDate", this.query_data.startDate);
-      params.append("endDate", this.query_data.endDate);
-      let config = {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      };
+    query() {
       axios
-        .get("post/query", params, config)
+        .get("artifact/fetch/query", {params: this.query_data})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data;
+            this.items = res.data.data;
+            this.toPack();
           } else {
             alert(res.statusText);
           }
@@ -128,19 +149,20 @@ export default {
           alert(e);
         });
     },
-    clearQuery(){
-        this.query_data.userId=0;
-        this.query_data.userName='';
-        this.query_data.title='';
-        this.query_data.startDate='';
-        this.query_data=endDate='';
+    clearQuery() {
+      this.query_data.userId = 0;
+      this.query_data.userName = "";
+      this.query_data.title = "";
+      this.query_data.startDate = "";
+      this.query_data.endDate = "";
     },
     getNews() {
       axios
-        .get("/post/fetch/newest")
+        .get("artifact/fetch/newest",{params:this.page})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data;
+            this.items = res.data.data;
+            this.toPack();
           } else {
             alert(res.statusText);
           }
@@ -149,6 +171,22 @@ export default {
           alert(e);
         });
     },
+    toSelf(){
+      axios.get("artifact/by_user/"+this.id,{params:this.page})
+      .then(res=>{
+        if(res.status==200){
+          this.items=res.data.data;
+          this.toPack();
+        }else{
+          alert(res.statusText);
+        }
+      }).catch(e=>{
+        alert(e);
+      });
+    },
+  },
+  mounted(){
+    this.getNews();
   }
 };
 </script>
@@ -225,7 +263,7 @@ button {
 .artifact-cards {
   display: flex;
   flex-wrap: wrap;
-  justify-content:flex-start;
+  justify-content: flex-start;
 }
 
 .card {
@@ -239,22 +277,20 @@ button {
   border-radius: 10px;
 }
 
-.card:hover{
+.card:hover {
   box-shadow: 10px 10px 50px #fff;
 }
 
-.card img{
+.card img {
   width: 100%;
   height: 100%;
 }
 
-.card h1{
+.card h1 {
   margin: 1%;
   margin-top: 0px;
   padding: 0px;
   font-size: 1.2em;
   text-align: center;
 }
-
-
 </style>

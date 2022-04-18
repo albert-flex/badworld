@@ -33,7 +33,7 @@
         id,user_id,type_id,name,version,
         create_time,update_time,title,content
         from artifact
-        order by id desc limit #{size}
+        order by id desc
     </select>
 
     <select id="fetchNewsType" resultType="com.albertflex.blacksky.domain.ArtifactType">
@@ -79,25 +79,26 @@
         from artifact a
         left join user u on u.id=a.user_id
         <where>
-            <if test="artifactId!=null">
+            <if test="artifactId!=null and artifactId!=0">
                 and a.id=#{artifactId}
             </if>
-            <if test="userId!=null">
+            <if test="userId!=null and userId!=0">
                 and u.id=#{userId}
             </if>
-            <if test="userName!=null">
+            <if test="userName!=null and userName!=''">
                 and u.user_name like concat('%',#{userName},'%')
             </if>
-            <if test="name!=null">
-                and a.name like concat('%',#{name},'%')
+            <if test="title!=null and title!=''">
+                and a.title like concat('%',#{title},'%')
             </if>
-            <if test="startDate!=null">
+            <if test="startDate!=null and startDate!=''">
                 and a.create_time &gt;= #{startDate}
             </if>
-            <if test="endDate!=null">
+            <if test="endDate!=null and endDate!=''">
                 and a.create_time &lt;= #{endDate}
             </if>
         </where>
+        group by a.id
     </select>
     
     <insert id="newType" keyProperty="id" useGeneratedKeys="true">

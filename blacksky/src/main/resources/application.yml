@@ -34,3 +34,10 @@ logging:
   level:
     com.albertflex.blacksky.mapper: trace
     org.springframework.security: debug
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+

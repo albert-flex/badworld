@@ -6,6 +6,8 @@ import com.albertflex.blacksky.domain.UserAuthority;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -14,6 +16,8 @@ public interface UserMapper {
 
     //仅仅获取用户信息
     User fetchUser(Long id);
+
+    List<User> fetch();
 
     //通过用户名获取用户信息
     User fetchUserByName(String userName);

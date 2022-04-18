@@ -25,7 +25,7 @@
     <select id="fetchNewest" resultType="com.albertflex.blacksky.domain.BoardWord">
         select id,email,
         left_time,content
-        from board_word order by id desc limit 10
+        from board_word order by id desc
     </select>
 
     <delete id="delete">

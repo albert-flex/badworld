@@ -3,6 +3,8 @@
 package com.albertflex.blacksky.controller;
 
 import com.albertflex.blacksky.domain.Post;
+import com.albertflex.blacksky.query.PageData;
+import com.albertflex.blacksky.query.PageQuery;
 import com.albertflex.blacksky.query.PostQuery;
 import com.albertflex.blacksky.service.PostServices;
 
@@ -39,25 +41,29 @@ public class PostController {
     }
     
     @GetMapping("/by_user/{userId}")
-    public List<Post> fetchPostByUserId(@PathVariable("userId") Long userId){
-        return postServices.fetchPostsByUserId(userId);
+    public PageData<Post> fetchPostByUserId(@PathVariable("userId") Long userId, PageQuery page) {
+        page.start();
+        return PageData.of(postServices.fetchPostsByUserId(userId));
     }
 
-    @GetMapping("/query")
-    public List<Post> query(PostQuery query){
-        if(query==null)return Collections.emptyList();
+    @GetMapping("/fetch/query")
+    public PageData<Post> query(PostQuery query){
+        if(query==null)return PageData.of(Collections.emptyList());
+        query.start();
 
-        return postServices.query(query);
+        return PageData.of(postServices.query(query));
     }
 
     @GetMapping("/fetch/newest")
-    public List<Post> fetchNewsPost(){
-        return postServices.fetchNewPost();
+    public PageData<Post> fetchNewsPost(PageQuery page) {
+        page.start();
+        return PageData.of(postServices.fetchNewPost());
     }
     
     @GetMapping("/by_post/{postId}")
-    public List<Post> fetchPostsReplyOn(@PathVariable("postId") Long postId){
-        return postServices.fetchPostsReplyOn(postId);
+    public PageData<Post> fetchPostsReplyOn(@PathVariable("postId") Long postId,PageQuery page) {
+        page.start();
+        return PageData.of(postServices.fetchPostsReplyOn(postId));
     }
     
     @PostMapping

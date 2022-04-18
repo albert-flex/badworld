@@ -16,7 +16,7 @@ public interface ArtifactMapper {
     ArtifactType fetchType(Long typeId);
 
     List<Artifact> query(ArtifactQuery query);
-    List<Artifact> fetchNews(Integer size);
+    List<Artifact> fetchNews();
     List<ArtifactType> fetchNewsType();
 
     List<ArtifactType> fetchTypes(String name);

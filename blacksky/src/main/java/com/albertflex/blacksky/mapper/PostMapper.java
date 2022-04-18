@@ -16,7 +16,7 @@ public interface PostMapper {
     //根据用户Id获取已发布的帖子
     List<Post> fetchPostsByUserId(Long userId);
 
-    List<Post> fetchNewsPosts(Integer size);
+    List<Post> fetchNewsPosts();
 
     List<Post> query(PostQuery query);
     

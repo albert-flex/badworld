@@ -90,6 +90,11 @@
         where u.id=#{id} and u.password=#{password}
     </select>
 
+    <select id="fetch" resultType="com.albertflex.blacksky.domain.User">
+        select id,state,user_name,create_time,last_login,password
+        from user
+    </select>
+
     <!-- 根据用户名称获取用户 -->
     <select id="fetchUserByName" resultMap="userMap">
         select
