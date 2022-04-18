@@ -83,6 +83,14 @@ export default {
         title: "关于网站运营",
         publishTime: "2022/4/12 18:21:22",
       },
+      page1:{
+        pageIndex: 1,
+        pageSize: 10,
+      },
+      page2:{
+        pageIndex:1,
+        pageSize:1
+      }
     };
   },
   methods: {
@@ -116,10 +124,10 @@ export default {
   },
   mounted() {
     axios
-      .get("visit/board_word/newest")
+      .get("visit/board_word/newest",{params: this.page1})
       .then((response) => {
         if (response.status == 200) {
-          this.board_word_list = response.data;
+          this.board_word_list = response.data.data;
         } else {
           alert(response.statusText);
         }
@@ -129,11 +137,11 @@ export default {
       });
 
     axios
-      .get("visit/announce/newest")
+      .get("visit/announce/newest",{params: this.page2})
       .then((response) => {
         if (response.status == 200) {
           if (response.data.length != 0) {
-            let data = response.data[0];
+            let data = response.data.data[0];
             this.announce = data;
           }
         } else {

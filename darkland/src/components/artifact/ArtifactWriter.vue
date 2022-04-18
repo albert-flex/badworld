@@ -106,18 +106,6 @@ export default {
     return {
       editId: -1,
       types: [
-        {
-          id: 0,
-          name: "游戏",
-        },
-        {
-          id: 1,
-          name: "音乐",
-        },
-        {
-          id: 2,
-          name: "绘画",
-        },
       ],
       artifact: {
         id: 0,
@@ -183,12 +171,10 @@ export default {
             this.types= res.data;
           } else {
             alert(res.statusText);
-            return [];
           }
         })
         .catch((e) => {
           alert(e);
-          return [];
         });
     },
   },
