@@ -28,29 +28,49 @@
       <a-user-profile :id="id" />
       <ul class="post-button">
         <li><button @click="openPost">分享生活</button></li>
-        <li><button>看自己</button></li>
+        <li><button @click="getSelf">看自己</button></li>
       </ul>
       <form class="query-form">
         <h1>查询帖子</h1>
         <p>
           <label for="uid">用户Id</label>
-          <input type="text" name="uid" id="uid" v-model="query_data.userId"/>
+          <input type="text" name="uid" id="uid" v-model="query_data.userId" />
         </p>
         <p>
           <label for="uname">用户名</label>
-          <input type="text" name="uname" id="uname" v-model="query_data.userName"/>
+          <input
+            type="text"
+            name="uname"
+            id="uname"
+            v-model="query_data.userName"
+          />
         </p>
         <p>
           <label for="title">帖子标题</label>
-          <input type="text" name="title" id="title" v-model="query_data.title"/>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            v-model="query_data.title"
+          />
         </p>
         <p>
           <label for="timefrom">时间起点</label>
-          <input type="date" name="timefrom" id="timefrom" v-model="query_data.startDate" />
+          <input
+            type="date"
+            name="timefrom"
+            id="timefrom"
+            v-model="query_data.startDate"
+          />
         </p>
         <p>
           <label for="timeend">时间终点</label>
-          <input type="date" name="timeend" id="timeend" v-model="query_data.endDate"/>
+          <input
+            type="date"
+            name="timeend"
+            id="timeend"
+            v-model="query_data.endDate"
+          />
         </p>
         <div class="tool">
           <button @click.stop.prevent="query">查询</button>
@@ -117,6 +137,8 @@ import PageBack from "./PageBack.vue";
 import UserProfile from "./UserProfile.vue";
 import MaskBack from "./MaskBack.vue";
 import axios from "axios";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "PostHome",
@@ -147,7 +169,13 @@ export default {
         title: " ",
         startDate: "",
         endDate: "",
+        pageIndex: 1,
+        pageSize: 10
       },
+      page:{
+        pageIndex: 1,
+        pageSize: 10
+      }
     };
   },
   components: {
@@ -183,20 +211,13 @@ export default {
         });
     },
     query() {
-      let params = new FormData();
-      params.append("userId", this.query_data.userId);
-      params.append("userName", this.query_data.userName);
-      params.append("title", this.query_data.title);
-      params.append("startDate", this.query_data.startDate);
-      params.append("endDate", this.query_data.endDate);
-      let config = {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      };
+      this.query_data.pageIndex=this.page.pageIndex;
+      this.query_data.pageSize=this.page.pageSize;
       axios
-        .get("post/query", params, config)
+        .get("post/fetch/query",{params: this.query_data})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data;
+            this.items = res.data.data;
           } else {
             alert(res.statusText);
           }
@@ -205,19 +226,19 @@ export default {
           alert(e);
         });
     },
-    clearQuery(){
-        this.query_data.userId=0;
-        this.query_data.userName='';
-        this.query_data.title='';
-        this.query_data.startDate='';
-        this.query_data=endDate='';
+    clearQuery() {
+      this.query_data.userId = 0;
+      this.query_data.userName = "";
+      this.query_data.title = "";
+      this.query_data.startDate = "";
+      this.query_data = "";
     },
     getNews() {
       axios
-        .get("/post/fetch/newest")
+        .get("post/fetch/newest",{params: this.page})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data;
+            this.items = res.data.data;
           } else {
             alert(res.statusText);
           }
@@ -226,6 +247,18 @@ export default {
           alert(e);
         });
     },
+    getSelf(){
+      axios.get("post/by_user/"+this.id,{params: this.page})
+      .then(res=>{
+        if(res.status==200){
+          this.items=res.data.data;
+        }else{
+          alert(res.statusText);
+        }
+      }).catch(e=>{
+        alert(e);
+      });
+    }
   },
   mounted() {
     this.getNews();

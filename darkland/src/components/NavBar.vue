@@ -103,7 +103,7 @@ export default {
       let config ={
         headers: {"Content-Type":"application/x-www-form-urlencoded"}
       };
-      let url="login";
+      let url="/login";
       axios.post(url,params,config)
       .then(response=> {
         if(response.status==200) {

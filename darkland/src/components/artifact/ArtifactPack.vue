@@ -15,51 +15,13 @@ axios.defaults.baseURL="/api";
 export default {
   name: "ArtifactPack",
   emits:["view"],
-  data() {
-    return {
-      items: [
-        {
-          id: 0,
-          title: "标题标题",
-        },
-        {
-          id: 1,
-          title: "标题标题",
-        },
-        {
-          id: 2,
-          title: "标题标题",
-        },
-        {
-          id: 3,
-          title: "标题标题",
-        },
-        {
-          id: 4,
-          title: "标题标题",
-        },
-        {
-          id: 5,
-          title: "标题标题",
-        },
-        {
-          id: 6,
-          title: "标题标题",
-        },
-      ],
-    };
+  props:{
+    items: [],
   },
-  mounted(){
-    axios.get("artifact/fetch/news")
-    .then(res=>{
-      if(res.status==200){
-        this.items=res.data;
-      }else{
-        alert(res.statusText);
-      }
-    }).catch(e=>{
-      alert(e);
-    });
+  methods:{
+    toPage(id,index,size){
+      this.$emit(id,index,size);
+    }
   }
 };
 </script>
