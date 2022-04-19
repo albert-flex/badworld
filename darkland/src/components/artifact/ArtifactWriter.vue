@@ -2,8 +2,8 @@
   <div class="all">
     <div class="head">
       <div class="avator">
-        <img alt="用户头像" src="./default.png" />
-        <input type="file" name="avataor" id="avator-button" v-if="!isView" />
+        <img alt="用户头像" :src="imgV" />
+        <input type="file" name="avataor" id="avator-button" v-if="!isView"  @change="getFile($event)"/>
       </div>
       <div class="data" v-if="!isView">
         <p>
@@ -34,7 +34,9 @@
             :disabled="isView"
             v-model="artifact.typeId"
           >
-            <option v-for="item in types" :key="item.id" :value="item.id">{{ item.name }}</option>
+            <option v-for="item in types" :key="item.id" :value="item.id">
+              {{ item.name }}
+            </option>
           </select>
           <button @click="addNewType">+</button>
         </p>
@@ -54,6 +56,10 @@
         </div>
       </div>
       <div class="data2" v-if="isView">
+        <p>
+          <label for="userName">作者</label>
+          <label> {{ artifact.userName }} </label>
+        </p>
         <p>
           <label for="name">名称</label>
           <label>{{ artifact.name }}</label>
@@ -101,6 +107,7 @@ export default {
     viewId: Number,
     isView: Boolean,
     userId: Number,
+    imgV: String,
   },
   data() {
     return {
@@ -116,6 +123,7 @@ export default {
         version: "0",
         content: "",
       },
+      filePic: '',
     };
   },
   computed: {
@@ -128,6 +136,31 @@ export default {
     AView: VMdPreview,
   },
   methods: {
+    getFile(event) {
+      const files = event.target.files;
+      this.filePic = files[0];
+    },
+    postAvator(id) {
+      let formData = new FormData();
+      formData.append("lib", "artifact");
+      formData.append("ownId",id);
+      formData.append("name", "picture");
+      formData.append("file", this.filePic);
+      axios
+        .post("file_resource/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("成功，id:" + res.data);
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
     addNewType() {
       let aname = prompt("请输入需要添加的新类型", "default");
       axios.post("artifact/type",{name: aname,userId: this.userId})
@@ -156,6 +189,7 @@ export default {
         .post("artifact", this.artifact)
         .then((res) => {
           if (res.status == 200) {
+            this.postAvator(res.data.id);
             alert("成功");
             this.$emit("back");
           } else {
@@ -177,24 +211,47 @@ export default {
           alert(e);
         });
     },
+    getAuthorName(id,artifact){
+      axios.
+        get("user/fetch/"+id)
+        .then(res=>{
+          if(res.status==200){
+              artifact.userName=res.data.userName;
+          }
+        }).catch(e=>{
+          alert(e);
+        });
+    }
   },
   mounted() {
-    this.fetchTypeNews();
-    if (this.isView) {
       axios
-        .get("artifact/" + this.viewId)
+        .get("artifact/fetch/newstype")
         .then((res) => {
           if (res.status == 200) {
-            this.artifact = res.data;
-            this.artifact.type=this.fetchTypeName(res.data.typeId);
+            this.types= res.data;
           } else {
             alert(res.statusText);
           }
+            if (this.isView) {
+              axios
+                .get("artifact/" + this.viewId)
+                .then((res) => {
+                  if (res.status == 200) {
+                    this.artifact = res.data;
+                    this.artifact.type=this.fetchTypeName(res.data.typeId);
+                    this.getAuthorName(this.artifact.userId,this.artifact);
+                  } else {
+                    alert(res.statusText);
+                  }
+                })
+                .catch((e) => {
+                  alert(e);
+                });
+            }
         })
         .catch((e) => {
           alert(e);
         });
-    }
   },
 };
 </script>

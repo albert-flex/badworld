@@ -10,7 +10,12 @@
         <h1>查询作品</h1>
         <p>
           <label for="aid">作品Id</label>
-          <input type="text" name="aid" id="aid" v-model="query_data.artifactId" />
+          <input
+            type="text"
+            name="aid"
+            id="aid"
+            v-model="query_data.artifactId"
+          />
         </p>
         <p>
           <label for="uid">用户Id</label>
@@ -18,11 +23,21 @@
         </p>
         <p>
           <label for="uname">用户名</label>
-          <input type="text" name="uname" id="uname" v-model="query_data.userName" />
+          <input
+            type="text"
+            name="uname"
+            id="uname"
+            v-model="query_data.userName"
+          />
         </p>
         <p>
           <label for="title">标题</label>
-          <input type="text" name="title" id="title" v-model="query_data.title" />
+          <input
+            type="text"
+            name="title"
+            id="title"
+            v-model="query_data.title"
+          />
         </p>
         <p>
           <label for="timefrom">时间起点</label>
@@ -58,9 +73,10 @@
         :view-id="viewId"
         :user-id="id"
         :items="items"
+        :img-v="imgV"
       />
 
-      <a-page-back :disable="compName=='AArtifactWriter'"/>
+      <a-page-back :disable="compName == 'AArtifactWriter'" />
     </div>
   </div>
 </template>
@@ -93,13 +109,14 @@ export default {
         startDate: "",
         endDate: "",
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
       },
-      page:{
+      page: {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
       },
       items: [],
+      imgV: "",
     };
   },
   computed: {
@@ -116,12 +133,14 @@ export default {
   methods: {
     view(id) {
       this.viewId = id;
+      this.imgV="api/file_resource/download2?lib=artifact&ownId="+id;
       this.isView = true;
       this.nowComp = this.comps[1];
     },
     toWrite() {
       this.viewId = -1;
       this.isView = false;
+      this.imgV="";
       this.nowComp = this.comps[1];
     },
     toEdit(id) {
@@ -136,10 +155,10 @@ export default {
     },
     query() {
       axios
-        .get("artifact/fetch/query", {params: this.query_data})
+        .get("artifact/fetch/query", { params: this.query_data })
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data.data;
+            this.setItems(res.data.data);
             this.toPack();
           } else {
             alert(res.statusText);
@@ -158,10 +177,10 @@ export default {
     },
     getNews() {
       axios
-        .get("artifact/fetch/newest",{params:this.page})
+        .get("artifact/fetch/newest", { params: this.page })
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data.data;
+            this.setItems(res.data.data);
             this.toPack();
           } else {
             alert(res.statusText);
@@ -171,23 +190,32 @@ export default {
           alert(e);
         });
     },
-    toSelf(){
-      axios.get("artifact/by_user/"+this.id,{params:this.page})
-      .then(res=>{
-        if(res.status==200){
-          this.items=res.data.data;
-          this.toPack();
-        }else{
-          alert(res.statusText);
-        }
-      }).catch(e=>{
-        alert(e);
-      });
+    toSelf() {
+      axios
+        .get("artifact/by_user/" + this.id, { params: this.page })
+        .then((res) => {
+          if (res.status == 200) {
+            this.setItems(res.data.data);
+            this.toPack();
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
+    setItems(data) {
+      for (let i = 0; i != data.length; ++i) {
+        let v=data[i];
+        v.url="api/file_resource/download2?lib=artifact&ownId=" + data[i].id;
+      }
+      this.items=data;
     },
   },
-  mounted(){
+  mounted() {
     this.getNews();
-  }
+  },
 };
 </script>
 

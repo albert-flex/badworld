@@ -3,17 +3,63 @@
     <div class="tap"></div>
     <div id="profile">
       <div class="firstline">
-        <img src="../assets/backpaper.png" />
-        <button>修改资料</button>
+        <img :src="avator" />
+        <input
+          type="file"
+          name="uploadAvator"
+          id="uploadAvator"
+          v-if="isEdit"
+          @change="getFile($event)"
+        />
+        <button @click="toEdit" v-if="!isEdit">修改资料</button>
+        <button @click="confirm" v-if="isEdit">完成</button>
       </div>
       <div class="secondline">
-        <p class="user-name">{{ my_user.username }} ({{ my_user.id }})</p>
-        <p class="user-email">{{ my_user.profile.email }}</p>
+        <p class="user-name" v-if="!isEdit">
+          {{ my_user.username }} ({{ my_user.id }})
+        </p>
+        <input
+          type="text"
+          name="username"
+          placeholder="用户名"
+          class="user-name"
+          id="username"
+          v-model="editData.userName"
+          v-if="isEdit"
+        />
+        <p class="user-email" v-if="!isEdit">{{ my_user.profile.email }}</p>
+        <input
+          type="email"
+          name="useremail"
+          placeholder="邮箱"
+          class="user-email"
+          id="email"
+          v-model="editData.profile.email"
+          v-if="isEdit"
+        />
       </div>
       <div class="thirdline">
-        <p>@{{ my_user.profile.work }}</p>
-        <p>@{{ my_user.profile.company }}</p>
-        <p>@{{ my_user.profile.website }}</p>
+        <p v-if="!isEdit">@{{ my_user.profile.work }}</p>
+        <p v-if="!isEdit">@{{ my_user.profile.company }}</p>
+        <p v-if="!isEdit">@{{ my_user.profile.website }}</p>
+        <input
+          type="text"
+          placeholder="工作"
+          v-model="editData.profile.work"
+          v-if="isEdit"
+        />
+        <input
+          type="text"
+          placeholder="公司"
+          v-model="editData.profile.company"
+          v-if="isEdit"
+        />
+        <input
+          type="text"
+          placeholder="网站"
+          v-model="editData.profile.website"
+          v-if="isEdit"
+        />
       </div>
     </div>
   </div>
@@ -21,13 +67,13 @@
 
 <script>
 import axios from "axios";
-axios.defaults.withCredentials=true;
-axios.defaults.baseURL="/api";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "UserProfile",
-  props:{
-    id:Number,
+  props: {
+    id: Number,
   },
   data() {
     return {
@@ -35,21 +81,108 @@ export default {
         id: 0,
         username: "",
         profile: {
+          email: "",
           website: "",
           company: "",
           work: "",
         },
       },
+      avatorFiles: [],
+      avator: "",
+      isEdit: false,
+      editData: {
+        id: 0,
+        username: "",
+        profile: {
+          userId: 0,
+          email: "",
+          work: "",
+          company: "",
+          website: "",
+        },
+      },
     };
   },
-  mounted(){
-    axios.get("/user/fetch_with_profile/"+this.id)
-    .then(res=>{
-      if(res.status==200){
-        this.my_user=res.data;
-      }
-    })
-  }
+  mounted() {
+    this.getSelf();
+  },
+  methods: {
+    getFile(event) {
+      const files = event.target.files;
+      this.avatorFiles[0] = files[0];
+    },
+    getSelf() {
+      axios
+        .get("user/fetch_with_profile/" + this.id)
+        .then((res) => {
+          if (res.status == 200) {
+            this.my_user = res.data;
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+      this.avator =
+        "api/file_resource/download2?lib=user/profile&ownId=" + this.id;
+    },
+    toEdit() {
+      this.editData.id = this.my_user.id;
+      this.editData.profile.userId = this.my_user.id;
+      this.editData.profile.email = this.my_user.profile.email;
+      this.editData.profile.work = this.my_user.profile.work;
+      this.editData.profile.website = this.my_user.profile.website;
+      this.editData.username = this.my_user.username;
+      this.isEdit = true;
+    },
+    postAvator() {
+      let formData = new FormData();
+      formData.append("lib", "user/profile");
+      formData.append("ownId", this.id);
+      formData.append("name", "avator");
+      formData.append("file", this.avatorFiles[0]);
+      axios
+        .post("file_resource/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("成功，id:" + res.data);
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+    },
+    confirm() {
+      axios
+        .put("user/update", this.editData)
+        .then((res) => {
+          if (res.status == 200) {
+            axios
+              .put("user/update_profile", this.editData.profile)
+              .then((res2) => {
+                if (res2.status == 200) {
+                  alert("修改成功");
+                  this.getSelf();
+                  this.postAvator();
+                } else {
+                  alert("失败：" + res2.statusText);
+                }
+              });
+          } else {
+            alert(res.statusText);
+          }
+        })
+        .catch((e) => {
+          alert(e);
+        });
+      this.isEdit = false;
+    },
+  },
 };
 </script>
 
@@ -88,6 +221,7 @@ export default {
 }
 
 .user-name {
+  background: none;
   font-size: 1.2em;
   color: white;
   margin: 0px;
@@ -95,7 +229,8 @@ export default {
 }
 
 .user-email {
-  color: darkgray;
+  background: none;
+  color: white;
   margin: 0px;
   margin-top: 0.5em;
   margin-left: 1em;
@@ -105,9 +240,11 @@ export default {
   display: flex;
 }
 
-.thirdline p {
+.thirdline p,
+.thirdline input {
+  background: none;
   width: 33%;
   text-align: center;
-  color: whitesmoke;
+  color: white;
 }
 </style>

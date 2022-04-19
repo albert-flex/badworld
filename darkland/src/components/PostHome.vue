@@ -108,7 +108,7 @@
             <div class="bar"></div>
             <div>
               <img src="../assets/backpaper.png" />
-              <p>{{ item.userId }}</p>
+              <p>{{ item.userName }}</p>
             </div>
           </div>
           <div class="left0">
@@ -175,7 +175,8 @@ export default {
       page:{
         pageIndex: 1,
         pageSize: 10
-      }
+      },
+      userIdCache:[],
     };
   },
   components: {
@@ -193,6 +194,7 @@ export default {
     },
     post() {
       this.post_data.userId = this.id;
+      this.post_data.createTime='';
       axios
         .post("post", this.post_data)
         .then((res) => {
@@ -217,7 +219,7 @@ export default {
         .get("post/fetch/query",{params: this.query_data})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data.data;
+            this.setItems(res.data);
           } else {
             alert(res.statusText);
           }
@@ -238,7 +240,7 @@ export default {
         .get("post/fetch/newest",{params: this.page})
         .then((res) => {
           if (res.status == 200) {
-            this.items = res.data.data;
+            this.setItems(res.data);
           } else {
             alert(res.statusText);
           }
@@ -247,17 +249,43 @@ export default {
           alert(e);
         });
     },
+    setItems(data){
+      let items=data.data;
+      for(let i=0;i!==items.length;++i){
+        let v=items[i];
+        this.getUserName(v.userId,v);
+      }
+      this.items=items;
+    },
     getSelf(){
       axios.get("post/by_user/"+this.id,{params: this.page})
       .then(res=>{
         if(res.status==200){
-          this.items=res.data.data;
+            this.setItems(res.data);
         }else{
           alert(res.statusText);
         }
       }).catch(e=>{
         alert(e);
       });
+    },
+    getUserName(id,data){
+      if(id===this.id){
+        return "我";
+      }else{
+        if(this.userIdCache[id]!==undefined){
+          data.userName=this.userIdCache[id];
+            return this.userIdCache[id];
+        }else{
+          axios.get("user/fetch/"+id)
+          .then(res=>{
+            if(res.status==200){
+              this.userIdCache[id]=res.data.userName;
+          data.userName=this.userIdCache[id];
+            }
+          })
+        }
+      }
     }
   },
   mounted() {

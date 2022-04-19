@@ -1,7 +1,12 @@
 <template>
   <div class="artifact-cards">
-    <div class="card" v-for="item in items" :key="item.id" @click="$emit('view',item.id)">
-      <img src="./default.png" alt="" />
+    <div
+      class="card"
+      v-for="item in items"
+      :key="item.id"
+      @click="$emit('view', item.id)"
+    >
+      <img :src="item.url" :id="item.id" />
       <h1>{{ item.title }}</h1>
     </div>
   </div>
@@ -9,20 +14,43 @@
 
 <script>
 import axios from "axios";
-axios.defaults.withCredentials=true;
-axios.defaults.baseURL="/api";
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api";
 
 export default {
   name: "ArtifactPack",
-  emits:["view"],
-  props:{
+  emits: ["view"],
+  props: {
     items: [],
   },
-  methods:{
-    toPage(id,index,size){
-      this.$emit(id,index,size);
+  data() {
+    return {
+      imgCache: [],
+      artifactPic: "",
+    };
+  },
+  methods: {
+    toPage(id, index, size) {
+      this.$emit(id, index, size);
+    },
+    fresh() {
+      for (let i = 0; i != this.items.length; ++i) {
+        let img = document.getElementById(this.items[i].id);
+        img.src =
+          "api/file_resource/download2?lib=artifact&ownId=" + this.items[i].id;
+        console.log("mounted...");
+      }
+    },
+  },
+  mounted() {
+    for (let i = 0; i != this.items.length; ++i) {
+      let img = document.getElementById(this.items[i].id);
+      if(img==null)return;
+      img.src =
+        "api/file_resource/download2?lib=artifact&ownId=" + this.items[i].id;
+      console.log("mounted...");
     }
-  }
+  },
 };
 </script>
 
