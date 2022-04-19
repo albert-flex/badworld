@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import PageBack from "./PageBack.vue";
+import PageBack2 from "./PageBack2.vue";
 import axios from "axios";
 import VMdPreview from "@kangc/v-md-editor/lib/preview";
 axios.defaults.baseURL="/api";
@@ -118,8 +118,8 @@ export default {
     }
   },
   components: {
-    WordPageBack: PageBack,
-    AnnouncePageBack: PageBack,
+    WordPageBack: PageBack2,
+    AnnouncePageBack: PageBack2,
     APreview: VMdPreview,
   },
   mounted() {
