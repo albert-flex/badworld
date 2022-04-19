@@ -95,6 +95,8 @@ drop table if exists `file_resource`;
 create table `file_resource`(
     `id` bigint not null auto_increment,
     `name` varchar(256) not null,
+    `lib` varchar(256) not null default '',
+    `own_id` bigint not null default 0,
     `format` varchar(256) not null,
     `upload_time` datetime not null default now(),
     primary key(`id`)

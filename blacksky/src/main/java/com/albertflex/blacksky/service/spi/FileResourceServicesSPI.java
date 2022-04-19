@@ -25,6 +25,13 @@ public class FileResourceServicesSPI implements FileResourceServices {
 
     @Override
     public Boolean add(FileResource file) {
+        if(file.getLib()!=null&&file.getOwnId()!=null){
+            Long l=mapper.fetch(file);
+            if(l!=null){
+                mapper.remove(l);
+            }
+        }
+
         int result= mapper.add(file);
         if(result==0&&file.getId()==null)return false;
         else return true;
@@ -33,6 +40,11 @@ public class FileResourceServicesSPI implements FileResourceServices {
     @Override
     public FileResource get(Long id) {
         return mapper.get(id);
+    }
+
+    @Override
+    public Long fetch(FileResource res) {
+        return mapper.fetch(res);
     }
 
     @Override

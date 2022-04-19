@@ -5,14 +5,8 @@ import com.albertflex.blacksky.query.PageQuery;
 import com.albertflex.blacksky.service.FileResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,14 +27,22 @@ public class FileResourceController {
         this.fileResourceServices = fileResourceServices;
     }
 
+    @GetMapping("/fetch/list")
     public List<FileResource> list(PageQuery page) {
         page.start();
         return fileResourceServices.views();
     }
 
+    @GetMapping
+    public Long fetch(FileResource resource){
+        return fileResourceServices.fetch(resource);
+    }
+
     @PostMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file,
-                         @RequestParam("name") String name) throws IOException {
+                         @RequestParam("name") String name,
+                         @RequestParam("lib") String lib,
+                         @RequestParam("ownId") Long ownId) throws IOException {
         File dir = new File("." + this.prefix);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -52,38 +54,42 @@ public class FileResourceController {
         FileResource resource = new FileResource();
         resource.setName(name);
         resource.setFormat(format);
+        if(lib!=null&&!lib.equals("")){
+            resource.setLib(lib);
+        }
+        if(ownId!=null&&!ownId.equals(0L)){
+            resource.setOwnId(ownId);
+        }
+
         if (!fileResourceServices.add(resource)) {
             return "DATABASE ERROR";
         }
         file.transferTo(new File(dir.getAbsoluteFile() + File.separator + resource.getId() + "." + format));
-        return "OK " + resource.getId();
+        return ""+resource.getId();
     }
 
-    @GetMapping("/get2/{id}")
-    public ResponseEntity<StreamingResponseBody> download(@PathVariable("id") Long id) {
-        FileResource resource = fileResourceServices.get(id);
-        if (resource == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + resource.getName() + "." + resource.getFormat())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(outputStream -> {
-                    String path = "." + this.prefix + File.separator + id + "." + resource.getFormat();
-                    try (InputStream in = new FileInputStream(path)) {
-                        StreamUtils.copy(in, outputStream);
-                    } catch (IOException e) {
+    @GetMapping("/download2")
+    public void download2(@RequestParam("lib") String lib,
+                          @RequestParam("ownId") Long ownId,HttpServletResponse response){
+        FileResource resource=new FileResource();
+        resource.setOwnId(ownId);
+        resource.setLib(lib);
+        Long id=fileResourceServices.fetch(resource);
+        if(id==null)return;
 
-                    }
-                });
+        _down(id,response);
     }
 
     @GetMapping("/{id}")
     public void download(
-            @PathVariable("id") Long id,
-            HttpServletRequest request, HttpServletResponse response) {
+            @PathVariable("id") Long id,HttpServletResponse response) {
 
+        _down(id,response);
+    }
+
+    private void _down(Long id,HttpServletResponse response){
         FileResource resource = fileResourceServices.get(id);
+        if(resource==null)return;
 
         BufferedInputStream fis = null;
         OutputStream os = null;
@@ -125,10 +131,5 @@ public class FileResourceController {
                 e.printStackTrace();
             }
         }
-    }
-
-    @GetMapping("/stream/{id}")
-    public void stream() {
-        //TODO
     }
 }

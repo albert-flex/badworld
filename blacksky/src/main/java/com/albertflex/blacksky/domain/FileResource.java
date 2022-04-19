@@ -12,6 +12,8 @@ public class FileResource implements Serializable {
     private Long id;
     //文件单名
     private String name;
+    private String lib;
+    private Long ownId;
     //文件后缀名
     private String format;
     //上传时间

@@ -11,5 +11,7 @@ public interface FileResourceMapper {
     List<FileResource> views();
     FileResource get(Long id);
     int add(FileResource resource);
+
+    Long fetch(FileResource res);
     int remove(Long id);
 }
