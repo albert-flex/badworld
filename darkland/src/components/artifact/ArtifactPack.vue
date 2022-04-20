@@ -33,23 +33,8 @@ export default {
     toPage(id, index, size) {
       this.$emit(id, index, size);
     },
-    fresh() {
-      for (let i = 0; i != this.items.length; ++i) {
-        let img = document.getElementById(this.items[i].id);
-        img.src =
-          "api/file_resource/download2?lib=artifact&ownId=" + this.items[i].id;
-        console.log("mounted...");
-      }
-    },
   },
   mounted() {
-    for (let i = 0; i != this.items.length; ++i) {
-      let img = document.getElementById(this.items[i].id);
-      if(img==null)return;
-      img.src =
-        "api/file_resource/download2?lib=artifact&ownId=" + this.items[i].id;
-      console.log("mounted...");
-    }
   },
 };
 </script>

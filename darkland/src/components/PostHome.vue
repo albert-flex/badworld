@@ -98,7 +98,7 @@
           <div class="right0">
             <div class="bar"></div>
             <div>
-              <img src="../assets/backpaper.png" />
+              <img :src="item.imgUrl" />
               <p>我</p>
             </div>
           </div>
@@ -107,7 +107,7 @@
           <div class="right0">
             <div class="bar"></div>
             <div>
-              <img src="../assets/backpaper.png" />
+              <img :src="item.imgUrl" />
               <p>{{ item.userName }}</p>
             </div>
           </div>
@@ -127,13 +127,13 @@
         </article>
       </div>
 
-      <a-page-back />
+      <a-page-back ref="pageback" :params="queryParam" :pageSize="10" :pageUrl="queryUrl" @pageDone="setItems"/>
     </div>
   </div>
 </template>
 
 <script>
-import PageBack from "./PageBack.vue";
+import PageBack2 from "./PageBack2.vue";
 import UserProfile from "./UserProfile.vue";
 import MaskBack from "./MaskBack.vue";
 import axios from "axios";
@@ -170,18 +170,21 @@ export default {
         startDate: "",
         endDate: "",
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
       },
-      page:{
+      page: {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
       },
-      userIdCache:[],
+      userIdCache: [],
+      queryUrl: "",
+      query_urls: ["post/fetch/query", "post/fetch/newest", "post/by_user/"+this.id],
+      queryParam: "",
     };
   },
   components: {
     AMaskBack: MaskBack,
-    APageBack: PageBack,
+    APageBack: PageBack2,
     AUserProfile: UserProfile,
   },
   methods: {
@@ -194,7 +197,7 @@ export default {
     },
     post() {
       this.post_data.userId = this.id;
-      this.post_data.createTime='';
+      this.post_data.createTime = "";
       axios
         .post("post", this.post_data)
         .then((res) => {
@@ -213,20 +216,27 @@ export default {
         });
     },
     query() {
-      this.query_data.pageIndex=this.page.pageIndex;
-      this.query_data.pageSize=this.page.pageSize;
-      axios
-        .get("post/fetch/query",{params: this.query_data})
-        .then((res) => {
-          if (res.status == 200) {
-            this.setItems(res.data);
-          } else {
-            alert(res.statusText);
-          }
-        })
-        .catch((e) => {
-          alert(e);
-        });
+      this.queryUrl=this.query_urls[0];
+      this.queryParam=this.query_data;
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
+      });
+
+      // this.query_data.pageIndex = this.page.pageIndex;
+      // this.query_data.pageSize = this.page.pageSize;
+      // axios
+      //   .get("post/fetch/query", { params: this.query_data })
+      //   .then((res) => {
+      //     if (res.status == 200) {
+      //       this.setItems(res.data);
+      //     } else {
+      //       alert(res.statusText);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     alert(e);
+      //   });
     },
     clearQuery() {
       this.query_data.userId = 0;
@@ -236,57 +246,73 @@ export default {
       this.query_data = "";
     },
     getNews() {
-      axios
-        .get("post/fetch/newest",{params: this.page})
-        .then((res) => {
-          if (res.status == 200) {
-            this.setItems(res.data);
-          } else {
-            alert(res.statusText);
-          }
-        })
-        .catch((e) => {
-          alert(e);
-        });
-    },
-    setItems(data){
-      let items=data.data;
-      for(let i=0;i!==items.length;++i){
-        let v=items[i];
-        this.getUserName(v.userId,v);
-      }
-      this.items=items;
-    },
-    getSelf(){
-      axios.get("post/by_user/"+this.id,{params: this.page})
-      .then(res=>{
-        if(res.status==200){
-            this.setItems(res.data);
-        }else{
-          alert(res.statusText);
-        }
-      }).catch(e=>{
-        alert(e);
+      this.queryUrl=this.query_urls[1];
+      this.queryParam="";
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
       });
+
+      // axios
+      //   .get("post/fetch/newest", { params: this.page })
+      //   .then((res) => {
+      //     if (res.status == 200) {
+      //       this.setItems(res.data);
+      //     } else {
+      //       alert(res.statusText);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     alert(e);
+      //   });
     },
-    getUserName(id,data){
-      if(id===this.id){
+    setItems(data) {
+      let items = data.data;
+      for (let i = 0; i !== items.length; ++i) {
+        let v = items[i];
+        this.getUserName(v.userId, v);
+        v.imgUrl="api/file_resource/download2?lib=user/profile&ownId="+v.userId;
+      }
+      this.items = items;
+    },
+    getSelf() {
+      this.queryUrl=this.query_urls[2];
+      this.queryParam="";
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
+      });
+
+      // axios
+      //   .get("post/by_user/" + this.id, { params: this.page })
+      //   .then((res) => {
+      //     if (res.status == 200) {
+      //       this.setItems(res.data);
+      //     } else {
+      //       alert(res.statusText);
+      //     }
+      //   })
+      //   .catch((e) => {
+      //     alert(e);
+      //   });
+    },
+    getUserName(id, data) {
+      if (id === this.id) {
         return "我";
-      }else{
-        if(this.userIdCache[id]!==undefined){
-          data.userName=this.userIdCache[id];
-            return this.userIdCache[id];
-        }else{
-          axios.get("user/fetch/"+id)
-          .then(res=>{
-            if(res.status==200){
-              this.userIdCache[id]=res.data.userName;
-          data.userName=this.userIdCache[id];
+      } else {
+        if (this.userIdCache[id] !== undefined) {
+          data.userName = this.userIdCache[id];
+          return this.userIdCache[id];
+        } else {
+          axios.get("user/fetch/" + id).then((res) => {
+            if (res.status == 200) {
+              this.userIdCache[id] = res.data.userName;
+              data.userName = this.userIdCache[id];
             }
-          })
+          });
         }
       }
-    }
+    },
   },
   mounted() {
     this.getNews();

@@ -34,6 +34,8 @@ logging:
   level:
     com.albertflex.blacksky.mapper: trace
     org.springframework.security: debug
+  file:
+    path: .cata_log
 
 pagehelper:
   helperDialect: mysql

@@ -27,7 +27,7 @@
           <footer>{{ item.leftTime }}</footer>
         </article>
       </div>
-      <word-page-back />
+      <word-page-back @pageDone="boardPageDone" :pageUrl="pageUrlBoard" :pageSize="10"/>
     </div>
     <div class="announce">
       <article>
@@ -38,7 +38,7 @@
         </div>
         <footer>2022/4/22 18:29</footer>
       </article>
-      <announce-page-back />
+      <announce-page-back @pageDone="announcePageDone" :pageUrl="pageUrlAnnounce" :pageSize="1"/>
     </div>
   </div>
 </template>
@@ -64,18 +64,6 @@ export default {
             "你们很喜欢这个网站吗？我还可以.你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以",
           leftTime: "2022/4/22 20:32:21",
         },
-        {
-          email: "natsufumij@163.com",
-          content:
-            "2你们很喜欢这个网站吗？我还可以.你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以",
-          leftTime: "2022/4/22 20:32:21",
-        },
-        {
-          email: "natsufumij@163.com",
-          content:
-            "3你们很喜欢这个网站吗？我还可以.你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以你们很喜欢这个网站吗？我还可以",
-          leftTime: "2022/4/22 20:32:21",
-        },
       ],
       announce: {
         id: 1,
@@ -90,10 +78,15 @@ export default {
       page2:{
         pageIndex:1,
         pageSize:1
-      }
+      },
+      pageUrlBoard: "visit/board_word/newest",
+      pageUrlAnnounce: "visit/announce/newest",
     };
   },
   methods: {
+    boardPageUp(){
+       
+    },
     leftWord(){
        console.log(this.left_word.email);
        console.log(this.left_word.content);
@@ -115,6 +108,26 @@ export default {
        }).catch(e=>{
          alert(e);
        });
+    },
+    page(url,_page,arr){
+      axios.get(url,{params:_page})
+      .then(res=>{
+        if(res.status==200){
+          for(let i=0;i!=res.data.data.length;++i){
+            arr.unshift(res.data.data[i]);
+          }
+        }else{
+          alert(res.statusText);
+        }
+      }).catch(e=>{
+        alert(e);
+      });
+    },
+    boardPageDone(items){
+      this.board_word_list=items.data;
+    },
+    announcePageDone(items){
+      this.announce=items.data[0];
     }
   },
   components: {
@@ -123,18 +136,7 @@ export default {
     APreview: VMdPreview,
   },
   mounted() {
-    axios
-      .get("visit/board_word/newest",{params: this.page1})
-      .then((response) => {
-        if (response.status == 200) {
-          this.board_word_list = response.data.data;
-        } else {
-          alert(response.statusText);
-        }
-      })
-      .catch(function (error) {
-        error;
-      });
+    this.page("visit/announce/newest",this.page1,this.board_word_list);
 
     axios
       .get("visit/announce/newest",{params: this.page2})

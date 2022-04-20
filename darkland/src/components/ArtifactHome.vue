@@ -76,7 +76,8 @@
         :img-v="imgV"
       />
 
-      <a-page-back :disable="compName == 'AArtifactWriter'" />
+      <a-page-back ref="pageback" :disable="compName == 'AArtifactWriter'" 
+          :pageSize="10" :params="queryParam" :pageUrl="queryUrl" @pageDone="setItems"/>
     </div>
   </div>
 </template>
@@ -84,7 +85,7 @@
 <script>
 import UserProfile from "./UserProfile.vue";
 import ArtifactPack from "./artifact/ArtifactPack.vue";
-import PageBack from "./PageBack.vue";
+import PageBack2 from "./PageBack2.vue";
 import ArtifactWriter from "./artifact/ArtifactWriter.vue";
 import axios from "axios";
 axios.defaults.withCredentials = true;
@@ -117,6 +118,9 @@ export default {
       },
       items: [],
       imgV: "",
+      queryUrl: "",
+      query_urls: ["artifact/fetch/query", "artifact/fetch/newest", "artifact/by_user/"+this.id],
+      queryParam: "",
     };
   },
   computed: {
@@ -128,7 +132,7 @@ export default {
     AUserProfile: UserProfile,
     AArtifactPack: ArtifactPack,
     AArtifactWrite: ArtifactWriter,
-    APageBack: PageBack,
+    APageBack: PageBack2,
   },
   methods: {
     view(id) {
@@ -154,19 +158,12 @@ export default {
       this.nowComp = this.comps[0];
     },
     query() {
-      axios
-        .get("artifact/fetch/query", { params: this.query_data })
-        .then((res) => {
-          if (res.status == 200) {
-            this.setItems(res.data.data);
-            this.toPack();
-          } else {
-            alert(res.statusText);
-          }
-        })
-        .catch((e) => {
-          alert(e);
-        });
+      this.queryUrl=this.query_urls[0];
+      this.queryParam=this.query_data;
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
+      });
     },
     clearQuery() {
       this.query_data.userId = 0;
@@ -176,41 +173,29 @@ export default {
       this.query_data.endDate = "";
     },
     getNews() {
-      axios
-        .get("artifact/fetch/newest", { params: this.page })
-        .then((res) => {
-          if (res.status == 200) {
-            this.setItems(res.data.data);
-            this.toPack();
-          } else {
-            alert(res.statusText);
-          }
-        })
-        .catch((e) => {
-          alert(e);
-        });
+      this.queryUrl=this.query_urls[1];
+      this.queryParam="";
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
+      });
     },
     toSelf() {
-      axios
-        .get("artifact/by_user/" + this.id, { params: this.page })
-        .then((res) => {
-          if (res.status == 200) {
-            this.setItems(res.data.data);
-            this.toPack();
-          } else {
-            alert(res.statusText);
-          }
-        })
-        .catch((e) => {
-          alert(e);
-        });
+      this.queryUrl=this.query_urls[2];
+      this.queryParam="";
+      this.$nextTick(()=>{
+        console.log("call page");
+        this.$refs.pageback.page();        
+      });
     },
-    setItems(data) {
+    setItems(inf) {
+      let data=inf.data;
       for (let i = 0; i != data.length; ++i) {
         let v=data[i];
         v.url="api/file_resource/download2?lib=artifact&ownId=" + data[i].id;
       }
       this.items=data;
+      this.toPack();
     },
   },
   mounted() {
