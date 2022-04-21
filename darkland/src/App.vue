@@ -4,6 +4,7 @@
       @to-home="toHome"
       @to-about-site="toAboutSite"
       @logined="logined"
+      @to-admin="toAdmin"
     />
     <component :is="currentHome" @to-post="toPost" @to-artifact="toArtifact" :id="id"/>
     <a-foot-bar />
@@ -17,6 +18,7 @@ import HomePage from "./components/HomePage.vue";
 import AboutSite from "./components/AboutSite.vue";
 import PostHome from "./components/PostHome.vue";
 import ArtifactHome from "./components/ArtifactHome.vue";
+
 import axios from "axios";
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "/api";
@@ -26,7 +28,7 @@ export default {
   data() {
     return {
       currentTab: "AHomePage",
-      Tabs: ["AHomePage", "AAboutSite", "APostHome", "AArtifactHome"],
+      Tabs: ["AHomePage", "AAboutSite", "APostHome", "AArtifactHome","AAdminHome"],
       islogined: false,
       id: 0,
     };
@@ -68,6 +70,10 @@ export default {
     toHome() {
       this.currentTab = this.Tabs[0];
       console.log("to Home!");
+    },
+    toAdmin(){
+      this.currentTab=this.Tabs[4];
+      console.log("to Admin!");
     },
     toAboutSite() {
       this.currentTab = this.Tabs[1];

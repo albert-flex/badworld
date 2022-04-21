@@ -167,8 +167,8 @@ export default {
               .then((res2) => {
                 if (res2.status == 200) {
                   alert("修改成功");
-                  this.getSelf();
                   this.postAvator();
+                  this.getSelf();
                 } else {
                   alert("失败：" + res2.statusText);
                 }

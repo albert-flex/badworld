@@ -84,6 +84,12 @@ public class UserController{
         return userServices.updateUser(user);
     }
 
+    @PutMapping("update_and_profile")
+    public Boolean updateUserWithProfile(@RequestBody User user){
+        if(!userServices.updateUser(user))return false;
+        return userServices.updateProfile(user.getProfile());
+    }
+
     @PutMapping("update_profile")
     public Boolean updateProfile(@RequestBody Profile profile) {
         return userServices.updateProfile(profile);

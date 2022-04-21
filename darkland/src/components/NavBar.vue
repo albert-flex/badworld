@@ -1,6 +1,7 @@
 <template>
     <ul class="main-nav">
       <li class="push sitetitle"><button @click="$emit('toHome')">Bad World</button></li>
+      <li><button @click="$emit('toAdmin')">管理员</button></li>
       <li><button @click="$emit('toAboutSite')">关于网站</button></li>
       <li>
         <button @click="openLoginForm"><img src="../assets/user.svg" /></button>
@@ -58,7 +59,7 @@ axios.defaults.baseURL="/api";
 
 export default {
   name: "NavBar",
-  emits: ["toHome", "toAboutSite","logined"],
+  emits: ["toHome", "toAboutSite","logined","toAdmin"],
   data() {
     return {
       //TODO: Login
